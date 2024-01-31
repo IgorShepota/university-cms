@@ -1,43 +1,81 @@
-# User Stories for University CMS
+# University Schedule Web Application - User Stories
 
-## Teacher's Schedule Viewing
+## Student
 
-**As a** Teacher,
-**I want to** view my class timetable,
-**So that** I can manage my teaching schedule efficiently.
+### 1. View Schedule
+- **Given** user is logged in as a Student
+- **User can** navigate to `My Schedule`
+- **User can** view their current class schedule by selected date/range filter
 
-### Acceptance Criteria:
+### 2. Download Schedule
+- **Given** user is on the `My Schedule` page
+- **User can** download the schedule in PDF or other convenient formats for printing or offline viewing
 
-- **Given** I am logged in as a Teacher,
-  **When** I navigate to the `My Schedule` menu,
-  **Then** I should be presented with my current teaching schedule.
-- **Given** I am viewing my schedule,
-  **When** I select a specific date or a date range,
-  **Then** I should see the schedule for the selected date or range.
-- **Given** I am looking at my schedule for a month,
-  **When** I select a month from the calendar,
-  **Then** I should see all the classes I will be teaching for the entire month.
-- **Given** I am looking at my schedule for a day,
-  **When** I pick a day from the calendar,
-  **Then** I should see all the classes I am scheduled to teach on that particular day.
+### 3. View Class Details
+- **Given** user is viewing their schedule
+- **User can** click on a lesson to view details including group, classroom, and subject description
 
-## Student's Schedule Viewing
+### 4. Access Group Information
+- **Given** user is logged in as a Student
+- **User can** access `Group Information` to view details about their group and fellow members
 
-**As a** Student,
-**I want to** view my class timetable,
-**So that** I can plan my study and personal activities accordingly.
+### 5. View Teacher Profiles
+- **Given** user is logged in as a Student
+- **User can** view profiles of teachers including contact information and subjects taught
 
-### Acceptance Criteria:
+### 6. Personal Profile
+- **Given** user is logged in as a Student
+- **User can** edit personal information in their `Profile` settings
 
-- **Given** I am logged in as a Student,
-  **When** I navigate to the `My Schedule` menu,
-  **Then** I should be presented with my current class schedule.
-- **Given** I am viewing my schedule,
-  **When** I select a specific date,
-  **Then** I should see the classes scheduled for that particular day.
-- **Given** I am viewing my schedule,
-  **When** I select a month,
-  **Then** I should see the classes scheduled for the entire selected month.
-- **Given** I am viewing the schedule for a day,
-  **When** I click on a class,
-  **Then** I should see the details of the class including subject, time, teacher, and classroom.
+## Teacher
+
+### 1. View Schedule
+- **Given** user is logged in as a Teacher
+- **User can** navigate to `My Schedule`
+- **User can** view their current teaching schedule by selected date/range filter
+
+### 2. Download Schedule
+- **Given** user is on the `My Schedule` page
+- **User can** download the schedule in PDF or other convenient formats
+
+### 3. View Lesson Details
+- **Given** user is viewing their schedule
+- **User can** click on a lesson to view details including group, classroom, and subject description
+
+### 4. View Group List
+- **Given** user is logged in as a Teacher
+- **User can** view a list of groups they are teaching
+
+### 5. View Student Schedule
+- **Given** user is logged in as a Teacher
+- **User can** view a specific student's schedule
+
+### 6. Information on Taught Subjects
+- **Given** user is logged in as a Teacher
+- **User can** access information about the subjects they teach
+
+### 7. Personal Profile
+- **Given** user is logged in as a Teacher
+- **User can** edit personal information in their `Profile` settings
+
+## Admin
+
+### 1. Schedule Creation and Modification
+- **Given** user is logged in as an Admin
+- **User can** create and modify the class schedule
+
+### 2. Access and Rights Management
+- **Given** user is logged in as an Admin
+- **User can** manage access and rights for students and teachers
+
+### 3. Group Creation and Subject Assignment
+- **Given** user is logged in as an Admin
+- **User can** create groups, add students, and assign subjects to groups
+
+### 4. Assign Teachers to Subjects
+- **Given** user is logged in as an Admin
+- **User can** assign teachers to subjects
+
+### 5. Adding New Students, Teachers, and Subjects
+- **Given** user is logged in as an Admin
+- **User can** add new students, teachers, and subjects into the system
