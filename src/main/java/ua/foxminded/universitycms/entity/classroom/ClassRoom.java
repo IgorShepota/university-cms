@@ -12,7 +12,9 @@ import javax.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
 import ua.foxminded.universitycms.entity.lesson.Lesson;
 
@@ -22,6 +24,8 @@ import ua.foxminded.universitycms.entity.lesson.Lesson;
 @AllArgsConstructor
 @Builder(setterPrefix = "with")
 @Data
+@EqualsAndHashCode(exclude = "lessons")
+@ToString(exclude = "lessons")
 public class ClassRoom {
 
   @Id

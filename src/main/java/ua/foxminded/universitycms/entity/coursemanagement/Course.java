@@ -13,7 +13,9 @@ import javax.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
 import ua.foxminded.universitycms.entity.user.roles.Teacher;
 
@@ -23,6 +25,8 @@ import ua.foxminded.universitycms.entity.user.roles.Teacher;
 @AllArgsConstructor
 @Builder(setterPrefix = "with")
 @Data
+@EqualsAndHashCode(exclude = {"teachers", "courseAssignments"})
+@ToString(exclude = {"teachers", "courseAssignments"})
 public class Course {
 
   @Id

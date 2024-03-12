@@ -1,5 +1,6 @@
 package ua.foxminded.universitycms.entity.user;
 
+import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,9 +13,13 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
+import lombok.experimental.Tolerate;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -23,6 +28,8 @@ import org.hibernate.annotations.GenericGenerator;
 @AllArgsConstructor
 @SuperBuilder(setterPrefix = "with")
 @Data
+@EqualsAndHashCode(exclude = "password")
+@ToString(exclude = "password")
 public class User {
 
   @Id
