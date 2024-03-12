@@ -44,11 +44,11 @@ public class Lesson {
   @NotNull(message = "End time cannot be null")
   private LocalTime endTime;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "classroom_id", nullable = false)
   private ClassRoom classroom;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.EAGER)
   @JoinColumn(name = "course_assignment_id", nullable = false)
   private CourseAssignment courseAssignment;
 
