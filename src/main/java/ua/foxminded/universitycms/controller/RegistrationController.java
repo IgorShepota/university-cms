@@ -10,6 +10,7 @@ public class RegistrationController {
 
   @GetMapping
   public String showRegistrationForm() {
+
     return "registration";
   }
 

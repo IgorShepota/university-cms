@@ -20,6 +20,7 @@
           <th scope="col">First Name</th>
           <th scope="col">Last Name</th>
           <th scope="col">Email</th>
+          <th scope="col">Gender</th>
           <th scope="col">Group</th>
         </tr>
         </thead>
@@ -29,7 +30,8 @@
           <td th:text="${student.firstName}">First Name</td>
           <td th:text="${student.lastName}">Last Name</td>
           <td th:text="${student.email}">Email</td>
-          <td th:text="${student.ownerGroup.name}">Group Name</td>
+          <td th:text="${student.gender}">Gender</td>
+          <td th:text="${student.groupName}">Group Name</td>
         </tr>
         </tbody>
       </table>
