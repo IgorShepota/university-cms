@@ -71,9 +71,9 @@ CREATE TABLE course_assignments
 CREATE TABLE lessons
 (
     id                   VARCHAR(36) PRIMARY KEY,
-    date                 DATE NOT NULL,
-    start_time           TIME NOT NULL CHECK (start_time < end_time),
-    end_time             TIME NOT NULL,
+    date                 DATE        NOT NULL,
+    start_time           TIME        NOT NULL CHECK (start_time < end_time),
+    end_time             TIME        NOT NULL,
     classroom_id         VARCHAR(36) NOT NULL,
     course_assignment_id VARCHAR(36) NOT NULL,
     FOREIGN KEY (classroom_id) REFERENCES classrooms (id),

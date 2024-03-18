@@ -2,60 +2,20 @@ package ua.foxminded.universitycms.service.user;
 
 import java.util.List;
 import java.util.Optional;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import ua.foxminded.universitycms.entity.user.User;
-import ua.foxminded.universitycms.repository.user.UserRepository;
+import ua.foxminded.universitycms.model.dto.user.UserDTO;
 
-@Service
-@RequiredArgsConstructor
-@Slf4j
-public class UserService {
+public interface UserService {
 
-  private final UserRepository userRepository;
+  void addUser(UserDTO userDTO);
 
-  @Transactional
-  public void addUser(User user) {
-    userRepository.save(user);
-    log.info("User with id {} was successfully saved.", user.getId());
-  }
+  Optional<UserDTO> getUserById(String id);
 
-  public Optional<User> getUserById(String id) {
-    log.info("Fetching user with id {}.", id);
-    return userRepository.findById(id);
-  }
+  List<UserDTO> getAllUsers();
 
-  public List<User> getAllUsers() {
-    log.info("Fetching all users.");
-    return userRepository.findAll();
-  }
+  List<UserDTO> getAllUsers(Integer page, Integer itemsPerPage);
 
-  public List<User> getAllUsers(Integer page, Integer itemsPerPage) {
-    log.info("Fetching page {} of users with {} items per page.", page, itemsPerPage);
-    Pageable pageable = Pageable.ofSize(itemsPerPage).withPage(page - 1);
+  void updateUser(UserDTO userDTO);
 
-    return userRepository.findAll(pageable).getContent();
-  }
-
-  @Transactional
-  public void updateUser(User user) {
-    log.info("Updating user: {}", user);
-    userRepository.save(user);
-  }
-
-  @Transactional
-  public boolean deleteUser(String id) {
-    if (userRepository.existsById(id)) {
-      userRepository.deleteById(id);
-      log.info("User with id {} was successfully deleted.", id);
-      return true;
-    } else {
-      log.info("User with id {} not found.", id);
-      return false;
-    }
-  }
+  boolean deleteUser(String id);
 
 }
