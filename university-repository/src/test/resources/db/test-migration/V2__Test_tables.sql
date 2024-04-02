@@ -1,3 +1,14 @@
+DROP TABLE IF EXISTS lessons;
+DROP TABLE IF EXISTS course_assignments;
+DROP TABLE IF EXISTS teachers_courses;
+DROP TABLE IF EXISTS students;
+DROP TABLE IF EXISTS teachers;
+DROP TABLE IF EXISTS admins;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS courses;
+DROP TABLE IF EXISTS groups;
+DROP TABLE IF EXISTS classrooms;
+
 CREATE TABLE classrooms
 (
   id   VARCHAR(36) PRIMARY KEY,

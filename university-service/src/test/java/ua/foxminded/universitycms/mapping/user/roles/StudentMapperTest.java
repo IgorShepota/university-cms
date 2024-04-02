@@ -1,10 +1,8 @@
 package ua.foxminded.universitycms.mapping.user.roles;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mapstruct.factory.Mappers.getMapper;
 
 import java.util.UUID;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ua.foxminded.universitycms.dto.user.roles.StudentDTO;
 import ua.foxminded.universitycms.model.entity.Group;
