@@ -1,6 +1,6 @@
 --classrooms
 INSERT INTO classrooms (id, name)
-VALUES (uuid_generate_v4(), '101'),
+VALUES ('7e41c62b-222e-4a92-a3c1-f1b6b634b32d', '101'),
        (uuid_generate_v4(), '103'),
        (uuid_generate_v4(), '207'),
        (uuid_generate_v4(), '210'),
@@ -8,7 +8,7 @@ VALUES (uuid_generate_v4(), '101'),
 
 --groups
 INSERT INTO groups (id, name)
-VALUES (uuid_generate_v4(), 'FLA-101'),
+VALUES ('987fbc97-4bed-5078-9f07-9141ba07c9f3', 'FLA-101'),
        (uuid_generate_v4(), 'FLA-203'),
        (uuid_generate_v4(), 'FLA-306'),
        (uuid_generate_v4(), 'FLA-402'),
@@ -16,7 +16,7 @@ VALUES (uuid_generate_v4(), 'FLA-101'),
 
 --courses
 INSERT INTO courses (id, name, description)
-VALUES (uuid_generate_v4(), 'Aviation Fundamentals',
+VALUES ('4f5a5568-8f09-47c7-9f6b-5fb4f6a90d47', 'Aviation Fundamentals',
         'Introduction to aviation engineering and aerodynamics'),
        (uuid_generate_v4(), 'Material Science',
         'Study of materials used in aviation manufacturing'),
@@ -36,12 +36,12 @@ VALUES (uuid_generate_v4(), 'Aviation Fundamentals',
 
 --users (admins)
 insert into users (id, email, password, first_name, last_name, gender)
-values (uuid_generate_v4(), 'odaverin0@joomla.org', 'wC3)voToIslVs}.4', 'Olympie', 'Daverin',
+values ('251ce75d-3a2e-4384-861a-2bd10569e28e', 'odaverin0@joomla.org', 'wC3)voToIslVs}.4', 'Olympie', 'Daverin',
         'Female');
 
 --users (teachers)
 insert into users (id, email, password, first_name, last_name, gender)
-values (uuid_generate_v4(), 'fdalgarnocht1@illinois.edu', 'aF2"f{rx~cs\y(ee', 'Fidelio',
+values ('a7b4c6d8-e2f3-471b-8f62-3e2a7d9c3f5e', 'fdalgarnocht1@illinois.edu', 'aF2"f{rx~cs\y(ee', 'Fidelio',
         'Dalgarnocht', 'Male');
 insert into users (id, email, password, first_name, last_name, gender)
 values (uuid_generate_v4(), 'kbundy2@epa.gov', 'rQ9/P}F\f//', 'Katinka', 'Bundy', 'Female');
@@ -67,7 +67,7 @@ values (uuid_generate_v4(), 'csherra@jigsy.com', 'pU6|8&d5q2\)', 'Carmine', 'She
 
 --users (students)
 insert into users (id, email, password, first_name, last_name, gender)
-values (uuid_generate_v4(), 'vmicallef0@ow.ly', 'qC2~ie3&', 'Vannie', 'Micallef', 'Female');
+values ('8d849109-9ba5-46a5-8807-ba093306a7b8', 'vmicallef0@ow.ly', 'qC2~ie3&', 'Vannie', 'Micallef', 'Female');
 insert into users (id, email, password, first_name, last_name, gender)
 values (uuid_generate_v4(), 'tsalmon1@mlb.com', 'nE2+y8ot3', 'Terrance', 'Salmon', 'Male');
 insert into users (id, email, password, first_name, last_name, gender)
@@ -458,9 +458,8 @@ SELECT (SELECT id FROM users WHERE email = 'csherra@jigsy.com'),
 
 --course_assignments
 INSERT INTO course_assignments (id, group_id, course_id, teacher_id)
-VALUES (uuid_generate_v4(), (SELECT id FROM groups WHERE name = 'FLA-101'),
-        (SELECT id FROM courses WHERE name = 'Aviation Fundamentals'),
-        (SELECT id FROM users WHERE email = 'kbundy2@epa.gov')),
+VALUES ('123e4567-e89b-12d3-a456-426614174000', '987fbc97-4bed-5078-9f07-9141ba07c9f3',
+        '4f5a5568-8f09-47c7-9f6b-5fb4f6a90d47', 'a7b4c6d8-e2f3-471b-8f62-3e2a7d9c3f5e'),
        (uuid_generate_v4(), (SELECT id FROM groups WHERE name = 'FLA-101'),
         (SELECT id FROM courses WHERE name = 'Mathematics'),
         (SELECT id FROM users WHERE email = 'kbundy2@epa.gov')),
@@ -509,3 +508,8 @@ VALUES (uuid_generate_v4(), (SELECT id FROM groups WHERE name = 'FLA-101'),
        (uuid_generate_v4(), (SELECT id FROM groups WHERE name = 'FLA-507'),
         (SELECT id FROM courses WHERE name = 'Aircraft Maintenance'),
         (SELECT id FROM users WHERE email = 'rdowtry7@merriam-webster.com'));
+
+--lessons
+INSERT INTO lessons (id, date, start_time, end_time, classroom_id, course_assignment_id)
+VALUES ('5e12f539-d1b3-46a7-be8d-c21a9edfac11', '2024-03-30', '08:00:00', '09:30:00', '7e41c62b-222e-4a92-a3c1-f1b6b634b32d', '123e4567-e89b-12d3-a456-426614174000');
+
