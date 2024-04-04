@@ -2,19 +2,19 @@ package ua.foxminded.universitycms.service;
 
 import java.util.List;
 import java.util.Optional;
-import ua.foxminded.universitycms.model.entity.CourseAssignment;
+import ua.foxminded.universitycms.dto.CourseAssignmentDTO;
 
 public interface CourseAssignmentService {
 
-  void addCourseAssignment(CourseAssignment courseAssignment);
+  void addCourseAssignment(CourseAssignmentDTO courseAssignmentDTO);
 
-  Optional<CourseAssignment> getCourseAssignmentById(String id);
+  Optional<CourseAssignmentDTO> getCourseAssignmentById(String id);
 
-  List<CourseAssignment> getAllCourseAssignments();
+  List<CourseAssignmentDTO> getAllCourseAssignments();
 
-  List<CourseAssignment> getAllCourseAssignments(Integer page, Integer itemsPerPage);
+  List<CourseAssignmentDTO> getAllCourseAssignments(Integer page, Integer itemsPerPage);
 
-  void updateCourseAssignment(CourseAssignment courseAssignment);
+  void updateCourseAssignment(CourseAssignmentDTO courseAssignmentDTO);
 
   boolean deleteCourseAssignment(String id);
 
