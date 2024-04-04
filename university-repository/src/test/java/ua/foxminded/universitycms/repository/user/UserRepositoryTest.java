@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import ua.foxminded.universitycms.model.entity.user.User;
 import ua.foxminded.universitycms.repository.AbstractRepositoryTest;
 
-
 class UserRepositoryTest extends AbstractRepositoryTest {
 
   @Autowired

@@ -35,8 +35,7 @@ class CourseServiceImplTest {
   private CourseMapper courseMapper;
 
   @InjectMocks
-  private CourseServiceImpl courseServiceImpl;
-
+  private CourseServiceImpl courseService;
 
   @Test
   void addCourseShouldWorkCorrectlyIfCourseEntityDTOCorrect() {
@@ -47,7 +46,7 @@ class CourseServiceImplTest {
     when(courseMapper.courseDTOToCourse(courseDTO)).thenReturn(course);
     when(courseRepository.save(any(Course.class))).thenReturn(course);
 
-    courseServiceImpl.addCourse(courseDTO);
+    courseService.addCourse(courseDTO);
 
     verify(courseMapper).courseDTOToCourse(courseDTO);
     verify(courseRepository).save(course);
@@ -64,7 +63,7 @@ class CourseServiceImplTest {
     when(courseRepository.findById(id)).thenReturn(Optional.of(course));
     when(courseMapper.courseToCourseDTO(course)).thenReturn(expectedDTO);
 
-    Optional<CourseDTO> result = courseServiceImpl.getCourseById(id);
+    Optional<CourseDTO> result = courseService.getCourseById(id);
 
     assertThat(result).isPresent()
         .contains(expectedDTO);
@@ -75,7 +74,7 @@ class CourseServiceImplTest {
     String id = "non-existing-id";
     when(courseRepository.findById(id)).thenReturn(Optional.empty());
 
-    Optional<CourseDTO> result = courseServiceImpl.getCourseById(id);
+    Optional<CourseDTO> result = courseService.getCourseById(id);
 
     assertThat(result).isNotPresent();
   }
@@ -89,7 +88,7 @@ class CourseServiceImplTest {
     CourseDTO dto2 = new CourseDTO();
     when(courseMapper.courseToCourseDTO(any(Course.class))).thenReturn(dto1).thenReturn(dto2);
 
-    List<CourseDTO> result = courseServiceImpl.getAllCourses();
+    List<CourseDTO> result = courseService.getAllCourses();
 
     assertThat(result).hasSize(2)
         .containsExactly(dto1, dto2);
@@ -99,7 +98,7 @@ class CourseServiceImplTest {
   void getAllCoursesShouldReturnEmptyListWhenNoCoursesExist() {
     when(courseRepository.findAll()).thenReturn(Collections.emptyList());
 
-    List<CourseDTO> result = courseServiceImpl.getAllCourses();
+    List<CourseDTO> result = courseService.getAllCourses();
 
     assertThat(result).isEmpty();
   }
@@ -117,7 +116,7 @@ class CourseServiceImplTest {
     CourseDTO dto2 = new CourseDTO();
     when(courseMapper.courseToCourseDTO(any(Course.class))).thenReturn(dto1).thenReturn(dto2);
 
-    List<CourseDTO> result = courseServiceImpl.getAllCourses(page, itemsPerPage);
+    List<CourseDTO> result = courseService.getAllCourses(page, itemsPerPage);
 
     assertThat(result).hasSize(2)
         .containsExactly(dto1, dto2);
@@ -130,7 +129,7 @@ class CourseServiceImplTest {
 
     when(courseMapper.courseDTOToCourse(courseDTO)).thenReturn(course);
 
-    courseServiceImpl.updateCourse(courseDTO);
+    courseService.updateCourse(courseDTO);
 
     verify(courseMapper).courseDTOToCourse(courseDTO);
     verify(courseRepository).save(course);
@@ -141,7 +140,7 @@ class CourseServiceImplTest {
     String id = "existing-id";
     when(courseRepository.existsById(id)).thenReturn(true);
 
-    boolean result = courseServiceImpl.deleteCourse(id);
+    boolean result = courseService.deleteCourse(id);
 
     verify(courseRepository).deleteById(id);
     assertThat(result).isTrue();
@@ -152,7 +151,7 @@ class CourseServiceImplTest {
     String id = "non-existing-id";
     when(courseRepository.existsById(id)).thenReturn(false);
 
-    boolean result = courseServiceImpl.deleteCourse(id);
+    boolean result = courseService.deleteCourse(id);
 
     verify(courseRepository, never()).deleteById(id);
     assertThat(result).isFalse();

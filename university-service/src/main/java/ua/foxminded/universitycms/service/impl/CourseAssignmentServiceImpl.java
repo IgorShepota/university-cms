@@ -39,7 +39,6 @@ public class CourseAssignmentServiceImpl implements CourseAssignmentService {
         .map(courseAssignmentMapper::courseAssignmentToCourseAssignmentDTO);
   }
 
-
   @Override
   public List<CourseAssignmentDTO> getAllCourseAssignments() {
     log.info("Fetching all CourseAssignments.");
@@ -48,7 +47,6 @@ public class CourseAssignmentServiceImpl implements CourseAssignmentService {
         .map(courseAssignmentMapper::courseAssignmentToCourseAssignmentDTO)
         .collect(Collectors.toList());
   }
-
 
   @Override
   public List<CourseAssignmentDTO> getAllCourseAssignments(Integer page, Integer itemsPerPage) {
@@ -59,7 +57,6 @@ public class CourseAssignmentServiceImpl implements CourseAssignmentService {
         .map(courseAssignmentMapper::courseAssignmentToCourseAssignmentDTO)
         .collect(Collectors.toList());
   }
-
 
   @Override
   @Transactional

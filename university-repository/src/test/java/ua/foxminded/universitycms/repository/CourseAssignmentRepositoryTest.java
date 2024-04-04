@@ -12,7 +12,6 @@ class CourseAssignmentRepositoryTest extends AbstractRepositoryTest {
   @Autowired
   private CourseAssignmentRepository courseAssignmentRepository;
 
-
   @Test
   void findByIdShouldReturnCourseAssignmentWhenIdExists() {
     String expectedId = "123e4567-e89b-12d3-a456-426614174000";

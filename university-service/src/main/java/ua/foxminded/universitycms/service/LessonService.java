@@ -3,7 +3,6 @@ package ua.foxminded.universitycms.service;
 import java.util.List;
 import java.util.Optional;
 import ua.foxminded.universitycms.dto.LessonDTO;
-import ua.foxminded.universitycms.model.entity.Lesson;
 
 public interface LessonService {
 
