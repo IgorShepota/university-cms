@@ -123,7 +123,6 @@ class CourseAssignmentServiceImplTest {
     assertThat(result.get(0)).isEqualTo(dto);
   }
 
-
   @Test
   void updateCourseAssignmentShouldCorrectlyMapAndSaveCourseAssignment() {
     CourseAssignmentDTO courseAssignmentDTO = new CourseAssignmentDTO();
