@@ -98,7 +98,6 @@ class StudentServiceImplTest {
     assertThat(result).isEmpty();
   }
 
-
   @Test
   void getAllStudentsWithPaginationShouldReturnListOfStudentDTOsWhenStudentsExists() {
     int page = 1;

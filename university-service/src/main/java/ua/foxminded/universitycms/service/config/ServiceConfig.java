@@ -6,7 +6,8 @@ import org.springframework.context.annotation.Import;
 import ua.foxminded.universitycms.repository.config.RepositoryConfig;
 
 @Configuration
-@ComponentScan(basePackages = "ua.foxminded.universitycms.service")
+@ComponentScan(basePackages = {"ua.foxminded.universitycms.service",
+    "ua.foxminded.universitycms.mapping"})
 @Import(RepositoryConfig.class)
 public class ServiceConfig {
 
