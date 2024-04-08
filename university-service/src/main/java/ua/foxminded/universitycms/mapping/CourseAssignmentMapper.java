@@ -5,7 +5,7 @@ import org.mapstruct.Mapping;
 import ua.foxminded.universitycms.dto.CourseAssignmentDTO;
 import ua.foxminded.universitycms.model.entity.CourseAssignment;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface CourseAssignmentMapper {
 
   @Mapping(source = "group.id", target = "groupId")

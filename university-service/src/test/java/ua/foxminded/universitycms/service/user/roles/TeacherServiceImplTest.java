@@ -65,7 +65,6 @@ class TeacherServiceImplTest {
         .contains(expectedDTO);
   }
 
-
   @Test
   void getTeacherByIdShouldReturnEmptyOptionalWhenTeacherDoesNotExist() {
     String id = "non-existing-id";
@@ -98,7 +97,6 @@ class TeacherServiceImplTest {
     assertThat(result).isEmpty();
   }
 
-
   @Test
   void getAllTeachersWithPaginationShouldReturnListOfTeacherDTOsWhenTeachersExists() {
     int page = 1;
@@ -128,7 +126,6 @@ class TeacherServiceImplTest {
     verify(teacherMapper).teacherDTOToTeacher(teacherDTO);
     verify(teacherRepository).save(teacher);
   }
-
 
   @Test
   void deleteTeacherShouldWorkCorrectlyIfTeacherExists() {
