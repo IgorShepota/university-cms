@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import ua.foxminded.universitycms.model.entity.user.roles.Student;
 import ua.foxminded.universitycms.repository.AbstractRepositoryTest;
 
 class StudentRepositoryTest extends AbstractRepositoryTest {

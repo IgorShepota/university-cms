@@ -1,5 +1,6 @@
-package ua.foxminded.universitycms.model.entity.user.roles;
+package ua.foxminded.universitycms.model.entity.user.universityuserdata;
 
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -7,23 +8,19 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import ua.foxminded.universitycms.model.entity.Group;
-import ua.foxminded.universitycms.model.entity.user.User;
 
 @Entity
-@PrimaryKeyJoinColumn(name = "user_id")
-@Table(name = "students")
+@Table(name = "student_data")
+@PrimaryKeyJoinColumn(name = "id")
+@DiscriminatorValue("STUDENT")
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder(setterPrefix = "with")
 @Data
-@EqualsAndHashCode(callSuper = true, exclude = "ownerGroup")
-@ToString(callSuper = true, exclude = "ownerGroup")
-public class Student extends User {
+public class StudentData extends UniversityUserData{
 
   @ManyToOne
   @JoinColumn(name = "group_id", referencedColumnName = "id", nullable = false)

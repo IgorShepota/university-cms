@@ -6,7 +6,6 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import ua.foxminded.universitycms.model.entity.user.User;
-import ua.foxminded.universitycms.model.entity.user.roles.Admin;
 import ua.foxminded.universitycms.repository.AbstractRepositoryTest;
 
 class AdminRepositoryTest extends AbstractRepositoryTest {

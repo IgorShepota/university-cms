@@ -6,7 +6,6 @@ import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import ua.foxminded.universitycms.dto.user.roles.StudentDTO;
 import ua.foxminded.universitycms.model.entity.Group;
-import ua.foxminded.universitycms.model.entity.user.roles.Student;
 
 class StudentMapperTest {
 

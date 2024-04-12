@@ -1,6 +1,7 @@
-package ua.foxminded.universitycms.model.entity.user.roles;
+package ua.foxminded.universitycms.model.entity.user.universityuserdata;
 
 import java.util.List;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -16,21 +17,21 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import ua.foxminded.universitycms.model.entity.Course;
 import ua.foxminded.universitycms.model.entity.CourseAssignment;
-import ua.foxminded.universitycms.model.entity.user.User;
 
 @Entity
-@PrimaryKeyJoinColumn(name = "user_id")
-@Table(name = "teachers")
+@Table(name = "teacher_data")
+@PrimaryKeyJoinColumn(name = "id")
+@DiscriminatorValue("TEACHER")
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder(setterPrefix = "with")
 @Data
 @EqualsAndHashCode(callSuper = true, exclude = {"courses", "courseAssignments"})
 @ToString(callSuper = true, exclude = {"courses", "courseAssignments"})
-public class Teacher extends User {
+public class TeacherData extends UniversityUserData {
 
   @ManyToMany
-  @JoinTable(name = "teachers_courses", joinColumns = @JoinColumn(name = "teacher_id"),
+  @JoinTable(name = "teachers_courses", joinColumns = @JoinColumn(name = "teacher_data_id"),
       inverseJoinColumns = @JoinColumn(name = "course_id"))
   private List<Course> courses;
 

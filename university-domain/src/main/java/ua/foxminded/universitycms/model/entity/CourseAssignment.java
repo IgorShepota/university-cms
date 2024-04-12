@@ -16,7 +16,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
-import ua.foxminded.universitycms.model.entity.user.roles.Teacher;
+import ua.foxminded.universitycms.model.entity.user.universityuserdata.TeacherData;
 
 @Entity
 @Table(name = "course_assignments")
@@ -42,8 +42,8 @@ public class CourseAssignment {
   private Course course;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "teacher_id", nullable = false)
-  private Teacher teacher;
+  @JoinColumn(name = "teacher_data_id", nullable = false)
+  private TeacherData teacher;
 
   @OneToMany(mappedBy = "courseAssignment", fetch = FetchType.LAZY)
   private List<Lesson> lessons;
