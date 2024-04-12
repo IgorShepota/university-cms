@@ -20,7 +20,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import ua.foxminded.universitycms.dto.user.roles.TeacherDTO;
 import ua.foxminded.universitycms.mapping.user.roles.TeacherMapper;
-import ua.foxminded.universitycms.model.entity.user.roles.Teacher;
 import ua.foxminded.universitycms.repository.user.roles.TeacherRepository;
 import ua.foxminded.universitycms.service.impl.user.roles.TeacherServiceImpl;
 

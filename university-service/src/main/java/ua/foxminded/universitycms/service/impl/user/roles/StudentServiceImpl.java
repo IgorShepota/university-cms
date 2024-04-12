@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.foxminded.universitycms.dto.user.roles.StudentDTO;
 import ua.foxminded.universitycms.mapping.user.roles.StudentMapper;
-import ua.foxminded.universitycms.model.entity.user.roles.Student;
 import ua.foxminded.universitycms.repository.user.roles.StudentRepository;
 import ua.foxminded.universitycms.service.user.roles.StudentService;
 

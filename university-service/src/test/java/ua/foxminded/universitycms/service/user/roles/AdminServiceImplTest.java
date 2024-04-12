@@ -21,7 +21,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import ua.foxminded.universitycms.dto.user.roles.AdminDTO;
 import ua.foxminded.universitycms.mapping.user.roles.AdminMapper;
-import ua.foxminded.universitycms.model.entity.user.roles.Admin;
 import ua.foxminded.universitycms.repository.user.roles.AdminRepository;
 import ua.foxminded.universitycms.service.impl.user.roles.AdminServiceImpl;
 

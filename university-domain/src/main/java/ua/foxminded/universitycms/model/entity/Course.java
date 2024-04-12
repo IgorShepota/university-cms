@@ -17,7 +17,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
-import ua.foxminded.universitycms.model.entity.user.roles.Teacher;
+import ua.foxminded.universitycms.model.entity.user.universityuserdata.TeacherData;
 
 @Entity
 @Table(name = "courses")
@@ -42,7 +42,7 @@ public class Course {
   private String description;
 
   @ManyToMany(mappedBy = "courses", fetch = FetchType.LAZY)
-  private List<Teacher> teachers;
+  private List<TeacherData> teachers;
 
   @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
   private List<CourseAssignment> courseAssignments;

@@ -20,7 +20,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import ua.foxminded.universitycms.dto.user.roles.StudentDTO;
 import ua.foxminded.universitycms.mapping.user.roles.StudentMapper;
-import ua.foxminded.universitycms.model.entity.user.roles.Student;
 import ua.foxminded.universitycms.repository.user.roles.StudentRepository;
 import ua.foxminded.universitycms.service.impl.user.roles.StudentServiceImpl;
 

@@ -9,7 +9,6 @@ import ua.foxminded.universitycms.dto.CourseAssignmentDTO;
 import ua.foxminded.universitycms.model.entity.Course;
 import ua.foxminded.universitycms.model.entity.CourseAssignment;
 import ua.foxminded.universitycms.model.entity.Group;
-import ua.foxminded.universitycms.model.entity.user.roles.Teacher;
 
 class CourseAssignmentMapperTest {
 
