@@ -14,7 +14,7 @@ class LessonRepositoryTest extends AbstractRepositoryTest {
 
   @Test
   void findByIdShouldReturnLessonWhenIdExists() {
-    String expectedId = "5e12f539-d1b3-46a7-be8d-c21a9edfac11";
+    String expectedId = "4a9d5f8e-a8d8-11ed-a8fc-0242ac120002";
     Optional<Lesson> optionalLesson = lessonRepository.findById(
         expectedId);
     assertThat(optionalLesson).isPresent();

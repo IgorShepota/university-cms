@@ -1,62 +1,57 @@
 package ua.foxminded.universitycms.controller;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import java.util.Arrays;
 import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.ui.Model;
-import ua.foxminded.universitycms.dto.user.roles.StudentDTO;
-import ua.foxminded.universitycms.service.user.roles.StudentService;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import ua.foxminded.universitycms.dto.user.role.StudentDTO;
+import ua.foxminded.universitycms.service.user.UserService;
 
-@ExtendWith(MockitoExtension.class)
+@WebMvcTest(StudentController.class)
 class StudentControllerTest {
 
-  @Mock
-  private StudentService studentServiceMock;
+  @Autowired
+  private MockMvc mockMvc;
 
-  @Mock
-  private Model modelMock;
-
-  @InjectMocks
-  private StudentController studentController;
-
-  private List<StudentDTO> studentDTOs;
-
-  @BeforeEach
-  void setUp() {
-    StudentDTO studentDTO1 = StudentDTO.builder().build();
-    StudentDTO studentDTO2 = StudentDTO.builder().build();
-    studentDTOs = Arrays.asList(studentDTO1, studentDTO2);
-  }
+  @MockBean
+  private UserService userService;
 
   @Test
-  void listStudentsShouldReturnStudentsViewWithModelWhenCalled() {
-    when(studentServiceMock.getAllStudents()).thenReturn(studentDTOs);
+  void testListStudents() throws Exception {
+    List<StudentDTO> students = Arrays.asList(
+        StudentDTO.builder()
+            .id("1")
+            .email("john.doe@example.com")
+            .firstName("John")
+            .lastName("Doe")
+            .gender("Male")
+            .roleName("Student")
+            .groupName("Computer Science")
+            .build(),
+        StudentDTO.builder()
+            .id("2")
+            .email("jane.smith@example.com")
+            .firstName("Jane")
+            .lastName("Smith")
+            .gender("Female")
+            .roleName("Student")
+            .groupName("Mathematics")
+            .build()
+    );
 
-    String viewName = studentController.listStudents(modelMock);
+    Mockito.when(userService.getAllStudents()).thenReturn(students);
 
-    assertThat(viewName).isEqualTo("students");
-    verify(modelMock, times(1)).addAttribute("students", studentDTOs);
-  }
-
-  @Test
-  void getAllStudentsShouldReturnListOfStudentDTOsWhenCalled() {
-    List<StudentDTO> expectedStudentDTOs = studentDTOs;
-
-    when(studentServiceMock.getAllStudents()).thenReturn(expectedStudentDTOs);
-
-    List<StudentDTO> result = studentServiceMock.getAllStudents();
-
-    assertThat(result).isEqualTo(expectedStudentDTOs);
+    mockMvc.perform(MockMvcRequestBuilders.get("/students"))
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(MockMvcResultMatchers.view().name("students"))
+        .andExpect(MockMvcResultMatchers.model().attributeExists("students"))
+        .andExpect(MockMvcResultMatchers.model().attribute("students", students));
   }
 
 }

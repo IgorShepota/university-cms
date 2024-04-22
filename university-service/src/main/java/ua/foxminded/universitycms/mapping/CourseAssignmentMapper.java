@@ -10,7 +10,7 @@ public interface CourseAssignmentMapper {
 
   @Mapping(source = "group.id", target = "groupId")
   @Mapping(source = "course.id", target = "courseId")
-  @Mapping(source = "teacher.id", target = "teacherId")
+  @Mapping(source = "teacherData.id", target = "teacherDataId")
   CourseAssignmentDTO courseAssignmentToCourseAssignmentDTO(CourseAssignment courseAssignment);
 
   CourseAssignment courseAssignmentDTOToCourseAssignment(CourseAssignmentDTO courseAssignmentDTO);

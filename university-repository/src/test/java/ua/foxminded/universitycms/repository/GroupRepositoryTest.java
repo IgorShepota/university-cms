@@ -14,7 +14,7 @@ class GroupRepositoryTest extends AbstractRepositoryTest {
 
   @Test
   void findByIdShouldReturnGroupWhenIdExists() {
-    String expectedId = "987fbc97-4bed-5078-9f07-9141ba07c9f3";
+    String expectedId = "7a9d5f8e-a8d8-11ed-a8fc-0242ac120002";
     Optional<Group> optionalGroup = groupRepository.findById(
         expectedId);
     assertThat(optionalGroup).isPresent();

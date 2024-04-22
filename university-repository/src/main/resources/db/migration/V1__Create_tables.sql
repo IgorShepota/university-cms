@@ -20,13 +20,29 @@ CREATE TABLE courses
 CREATE TABLE roles
 (
   id   VARCHAR(36) PRIMARY KEY,
-  name VARCHAR(255) NOT NULL CHECK (name in ('UNVERIFIED', 'STUDENT', 'TEACHER', 'ADMIN'))
+  name VARCHAR(255) NOT NULL CHECK (name in ('UNVERIFIED', 'STUDENT', 'TEACHER', 'ADMIN')),
+  UNIQUE (name)
+);
+
+CREATE TABLE users
+(
+  id                      VARCHAR(36) PRIMARY KEY,
+  email                   VARCHAR(255) NOT NULL UNIQUE,
+  password                VARCHAR(255) NOT NULL,
+  first_name              VARCHAR(255) NOT NULL,
+  last_name               VARCHAR(255) NOT NULL,
+  gender                  VARCHAR(255) NOT NULL CHECK (gender IN ('Male', 'Female')),
+  role_id                 VARCHAR(36)  NOT NULL,
+  university_user_data_id VARCHAR(36),
+  FOREIGN KEY (role_id) REFERENCES roles (id),
+  UNIQUE (email, university_user_data_id)
 );
 
 CREATE TABLE university_user_data
 (
   id        VARCHAR(36) PRIMARY KEY,
-  data_type VARCHAR(255) NOT NULL CHECK (data_type in ('STUDENT', 'TEACHER', 'ADMIN'))
+  data_type VARCHAR(255) NOT NULL CHECK (data_type in ('STUDENT', 'TEACHER', 'ADMIN')),
+  FOREIGN KEY (id) REFERENCES users (id) ON DELETE CASCADE
 );
 
 CREATE TABLE admin_data
@@ -47,21 +63,6 @@ CREATE TABLE student_data
   group_id VARCHAR(36) NOT NULL,
   FOREIGN KEY (id) REFERENCES university_user_data (id),
   FOREIGN KEY (group_id) REFERENCES groups (id)
-);
-
-
-CREATE TABLE users
-(
-  id                      VARCHAR(36) PRIMARY KEY,
-  email                   VARCHAR(255) NOT NULL UNIQUE,
-  password                VARCHAR(255) NOT NULL,
-  first_name              VARCHAR(255) NOT NULL,
-  last_name               VARCHAR(255) NOT NULL,
-  gender                  VARCHAR(255) NOT NULL CHECK (gender IN ('Male', 'Female')),
-  role_name               VARCHAR(36)  NOT NULL,
-  university_user_data_id VARCHAR(36),
-  FOREIGN KEY (role_name) REFERENCES roles (name),
-  FOREIGN KEY (university_user_data_id) REFERENCES university_user_data (id)
 );
 
 CREATE TABLE teachers_courses

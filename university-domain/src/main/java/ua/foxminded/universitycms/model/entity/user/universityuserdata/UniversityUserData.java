@@ -2,18 +2,20 @@ package ua.foxminded.universitycms.model.entity.user.universityuserdata;
 
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.GenericGenerator;
-import ua.foxminded.universitycms.model.entity.user_dev.User;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+import ua.foxminded.universitycms.model.entity.user.User;
 
 @Entity
 @Table(name = "university_user_data")
@@ -26,11 +28,12 @@ import ua.foxminded.universitycms.model.entity.user_dev.User;
 public abstract class UniversityUserData {
 
   @Id
-  @GeneratedValue(generator = "uuid")
-  @GenericGenerator(name = "uuid", strategy = "uuid2")
   private String id;
 
-  @OneToOne(mappedBy = "universityUserData")
+  @OneToOne
+  @MapsId
+  @JoinColumn(name = "id", nullable = false)
+  @OnDelete(action = OnDeleteAction.CASCADE)
   private User user;
 
 }
