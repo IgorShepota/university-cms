@@ -5,20 +5,28 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import ua.foxminded.universitycms.dto.user.UserDTO;
+import ua.foxminded.universitycms.dto.user.UserRegistrationDTO;
 import ua.foxminded.universitycms.model.entity.user.User;
+import ua.foxminded.universitycms.model.entity.user.role.Role;
+import ua.foxminded.universitycms.model.entity.user.role.RoleName;
 
 class UserMapperTest {
 
-  private final UserMapper mapper = new UserMapperImpl();
+  private final UserMapperImpl mapper = new UserMapperImpl();
 
   @Test
   void userToUserDTOShouldMapCorrectlyIfDataIsCorrect() {
+    Role role = Role.builder()
+        .withName(RoleName.STUDENT)
+        .build();
+
     User user = new User();
     user.setId(UUID.randomUUID().toString());
     user.setEmail("test@example.com");
     user.setFirstName("John");
     user.setLastName("Doe");
     user.setGender("Male");
+    user.setRole(role);
 
     UserDTO userDTO = mapper.userToUserDTO(user);
 
@@ -27,30 +35,66 @@ class UserMapperTest {
     assertThat(userDTO.getFirstName()).isEqualTo(user.getFirstName());
     assertThat(userDTO.getLastName()).isEqualTo(user.getLastName());
     assertThat(userDTO.getGender()).isEqualTo(user.getGender());
+    assertThat(userDTO.getRoleName()).isEqualTo(user.getRole().getName().name());
+
   }
 
   @Test
-  void userDTOToUserShouldReturnNotNullWhenDataIsCorrect() {
-    UserDTO userDTO = new UserDTO();
-    userDTO.setId(UUID.randomUUID().toString());
-    userDTO.setEmail("example@test.com");
-    userDTO.setFirstName("Jane");
-    userDTO.setLastName("Doe");
-    userDTO.setGender("Female");
+  void userRoleNameShouldReturnNullIfRoleNameIsNull() {
+    Role role = Role.builder()
+        .withName(null)
+        .build();
 
-    User user = mapper.userDTOToUser(userDTO);
+    User user = User.builder()
+        .role(role)
+        .build();
 
-    assertThat(user).isNotNull();
+    UserDTO userDTO = mapper.userToUserDTO(user);
+
+    assertThat(userDTO.getRoleName()).isNull();
   }
 
   @Test
-  void userToUserDTOShouldReturnNullWhenUserIsNull() {
-    assertThat(mapper.userToUserDTO(null)).isNull();
+  void userRoleNameShouldReturnNullIfRoleIsNull() {
+    User user = new User();
+
+    UserDTO userDTO = mapper.userToUserDTO(user);
+
+    assertThat(userDTO.getRoleName()).isNull();
   }
 
   @Test
-  void userDTOToUserShouldReturnNullWhenUserDTOIsNull() {
-    assertThat(mapper.userDTOToUser(null)).isNull();
+  void userRegistrationDTOToUserShouldMapCorrectlyIfDataIsCorrect() {
+    UserRegistrationDTO userRegistrationDTO = UserRegistrationDTO.builder()
+        .email("test@example.com")
+        .password("password")
+        .firstName("John")
+        .lastName("Doe")
+        .gender("Male")
+        .build();
+
+    User user = mapper.userRegistrationDTOToUser(userRegistrationDTO);
+
+    assertThat(user.getEmail()).isEqualTo(userRegistrationDTO.getEmail());
+    assertThat(user.getPassword()).isEqualTo(userRegistrationDTO.getPassword());
+    assertThat(user.getFirstName()).isEqualTo(userRegistrationDTO.getFirstName());
+    assertThat(user.getLastName()).isEqualTo(userRegistrationDTO.getLastName());
+    assertThat(user.getGender()).isEqualTo(userRegistrationDTO.getGender());
+    assertThat(user.getRole()).isNull();
+  }
+
+  @Test
+  void userToUserDTOShouldReturnNullIfUserIsNull() {
+    UserDTO userDTO = mapper.userToUserDTO(null);
+
+    assertThat(userDTO).isNull();
+  }
+
+  @Test
+  void userRegistrationDTOToUserShouldReturnNullIfUserRegistrationDTOIsNull() {
+    User user = mapper.userRegistrationDTOToUser(null);
+
+    assertThat(user).isNull();
   }
 
 }

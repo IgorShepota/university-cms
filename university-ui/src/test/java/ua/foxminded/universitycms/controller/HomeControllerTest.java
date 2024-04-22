@@ -1,33 +1,23 @@
 package ua.foxminded.universitycms.controller;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
-
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-@ExtendWith(MockitoExtension.class)
-class HomeControllerTest {
+@WebMvcTest(HomeController.class)
+public class HomeControllerTest {
 
-  @InjectMocks
-  private HomeController homeController;
+  @Autowired
+  private MockMvc mockMvc;
 
   @Test
-  void indexShouldReturnIndexViewWhenRequested() throws Exception {
-    MockMvc mockMvc = MockMvcBuilders.standaloneSetup(homeController).build();
-
-    String viewName = homeController.index();
-    assertThat(viewName).isEqualTo("index");
-
-    mockMvc.perform(get("/"))
-        .andExpect(status().isOk())
-        .andExpect(view().name("index"));
+  public void testIndexView() throws Exception {
+    mockMvc.perform(MockMvcRequestBuilders.get("/"))
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(MockMvcResultMatchers.view().name("index"));
   }
 
 }

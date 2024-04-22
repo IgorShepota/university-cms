@@ -14,7 +14,7 @@ class ClassRoomRepositoryTest extends AbstractRepositoryTest {
 
   @Test
   void findByIdShouldReturnCorrectClassRoomWhenIdExists() {
-    String expectedId = "7e41c62b-222e-4a92-a3c1-f1b6b634b32d";
+    String expectedId = "9a9d5f8e-a8d8-11ed-a8fc-0242ac120002";
     Optional<ClassRoom> optionalClassRoom = classRoomRepository.findById(expectedId);
     assertThat(optionalClassRoom).isPresent();
     ClassRoom classRoom = optionalClassRoom.get();

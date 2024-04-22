@@ -14,9 +14,8 @@ class CourseRepositoryTest extends AbstractRepositoryTest {
 
   @Test
   void findByIdShouldReturnCourseWhenIdExists() {
-    String expectedId = "4f5a5568-8f09-47c7-9f6b-5fb4f6a90d47";
-    Optional<Course> optionalCourse = courseRepository.findById(
-        expectedId);
+    String expectedId = "8a9d5f8e-a8d8-11ed-a8fc-0242ac120002";
+    Optional<Course> optionalCourse = courseRepository.findById(expectedId);
     assertThat(optionalCourse).isPresent();
     Course course = optionalCourse.get();
     assertThat(course.getId()).isEqualTo(expectedId);

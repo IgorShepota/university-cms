@@ -14,7 +14,7 @@ class CourseAssignmentRepositoryTest extends AbstractRepositoryTest {
 
   @Test
   void findByIdShouldReturnCourseAssignmentWhenIdExists() {
-    String expectedId = "123e4567-e89b-12d3-a456-426614174000";
+    String expectedId = "3a9d5f8e-a8d8-11ed-a8fc-0242ac120002";
     Optional<CourseAssignment> optionalCourseAssignment = courseAssignmentRepository.findById(
         expectedId);
     assertThat(optionalCourseAssignment).isPresent();

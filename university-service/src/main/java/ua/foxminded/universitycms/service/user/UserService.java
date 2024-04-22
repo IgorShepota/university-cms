@@ -1,21 +1,20 @@
 package ua.foxminded.universitycms.service.user;
 
 import java.util.List;
-import java.util.Optional;
 import ua.foxminded.universitycms.dto.user.UserDTO;
+import ua.foxminded.universitycms.dto.user.UserRegistrationDTO;
+import ua.foxminded.universitycms.dto.user.role.StudentDTO;
 
 public interface UserService {
 
-  void addUser(UserDTO userDTO);
+  void registerUser(UserRegistrationDTO userRegistrationDTO);
 
-  Optional<UserDTO> getUserById(String id);
+  List<StudentDTO> getAllStudents();
+
+  List<UserDTO> getAllTeachers();
 
   List<UserDTO> getAllUsers();
 
   List<UserDTO> getAllUsers(Integer page, Integer itemsPerPage);
-
-  void updateUser(UserDTO userDTO);
-
-  boolean deleteUser(String id);
 
 }

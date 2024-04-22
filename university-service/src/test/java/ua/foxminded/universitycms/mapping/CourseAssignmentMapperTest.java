@@ -9,6 +9,7 @@ import ua.foxminded.universitycms.dto.CourseAssignmentDTO;
 import ua.foxminded.universitycms.model.entity.Course;
 import ua.foxminded.universitycms.model.entity.CourseAssignment;
 import ua.foxminded.universitycms.model.entity.Group;
+import ua.foxminded.universitycms.model.entity.user.universityuserdata.TeacherData;
 
 class CourseAssignmentMapperTest {
 
@@ -30,12 +31,12 @@ class CourseAssignmentMapperTest {
     group.setId(groupId);
     Course course = new Course();
     course.setId(courseId);
-    Teacher teacher = new Teacher();
-    teacher.setId(teacherId);
+    TeacherData teacherData = new TeacherData();
+    teacherData.setId(teacherId);
     CourseAssignment courseAssignment = CourseAssignment.builder()
         .withGroup(group)
         .withCourse(course)
-        .withTeacher(teacher)
+        .withTeacherData(teacherData)
         .build();
 
     CourseAssignmentDTO courseAssignmentDTO = mapper.courseAssignmentToCourseAssignmentDTO(
@@ -43,7 +44,7 @@ class CourseAssignmentMapperTest {
 
     assertThat(courseAssignmentDTO.getGroupId()).isEqualTo(groupId);
     assertThat(courseAssignmentDTO.getCourseId()).isEqualTo(courseId);
-    assertThat(courseAssignmentDTO.getTeacherId()).isEqualTo(teacherId);
+    assertThat(courseAssignmentDTO.getTeacherDataId()).isEqualTo(teacherId);
   }
 
   @Test
@@ -51,7 +52,7 @@ class CourseAssignmentMapperTest {
     CourseAssignmentDTO courseAssignmentDTO = CourseAssignmentDTO.builder()
         .groupId(UUID.randomUUID().toString())
         .courseId(UUID.randomUUID().toString())
-        .teacherId(UUID.randomUUID().toString())
+        .teacherDataId(UUID.randomUUID().toString())
         .build();
 
     CourseAssignment courseAssignment = mapper.courseAssignmentDTOToCourseAssignment(
@@ -75,7 +76,7 @@ class CourseAssignmentMapperTest {
     CourseAssignment courseAssignment = CourseAssignment.builder()
         .withGroup(null)
         .withCourse(null)
-        .withTeacher(null)
+        .withTeacherData(null)
         .build();
 
     CourseAssignmentDTO courseAssignmentDTO = mapper.courseAssignmentToCourseAssignmentDTO(
@@ -83,7 +84,7 @@ class CourseAssignmentMapperTest {
 
     assertThat(courseAssignmentDTO.getGroupId()).isNull();
     assertThat(courseAssignmentDTO.getCourseId()).isNull();
-    assertThat(courseAssignmentDTO.getTeacherId()).isNull();
+    assertThat(courseAssignmentDTO.getTeacherDataId()).isNull();
   }
 
   @Test
@@ -91,18 +92,18 @@ class CourseAssignmentMapperTest {
     CourseAssignment courseAssignment = new CourseAssignment();
     Group group = new Group();
     Course course = new Course();
-    Teacher teacher = new Teacher();
+    TeacherData teacherData = new TeacherData();
 
     courseAssignment.setGroup(group);
     courseAssignment.setCourse(course);
-    courseAssignment.setTeacher(teacher);
+    courseAssignment.setTeacherData(teacherData);
 
     CourseAssignmentDTO courseAssignmentDTO = mapper.courseAssignmentToCourseAssignmentDTO(
         courseAssignment);
 
     assertThat(courseAssignmentDTO.getGroupId()).isEqualTo(group.getId());
     assertThat(courseAssignmentDTO.getCourseId()).isEqualTo(course.getId());
-    assertThat(courseAssignmentDTO.getTeacherId()).isEqualTo(teacher.getId());
+    assertThat(courseAssignmentDTO.getTeacherDataId()).isEqualTo(teacherData.getId());
   }
 
 }

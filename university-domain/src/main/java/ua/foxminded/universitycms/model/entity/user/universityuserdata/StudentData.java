@@ -20,7 +20,7 @@ import ua.foxminded.universitycms.model.entity.Group;
 @AllArgsConstructor
 @SuperBuilder(setterPrefix = "with")
 @Data
-public class StudentData extends UniversityUserData{
+public class StudentData extends UniversityUserData {
 
   @ManyToOne
   @JoinColumn(name = "group_id", referencedColumnName = "id", nullable = false)

@@ -14,6 +14,6 @@ public class CourseAssignmentDTO {
   private String id;
   private String groupId;
   private String courseId;
-  private String teacherId;
+  private String teacherDataId;
 
 }

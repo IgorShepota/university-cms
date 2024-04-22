@@ -35,7 +35,7 @@ public class TeacherData extends UniversityUserData {
       inverseJoinColumns = @JoinColumn(name = "course_id"))
   private List<Course> courses;
 
-  @OneToMany(mappedBy = "teacher")
+  @OneToMany(mappedBy = "teacherData")
   private List<CourseAssignment> courseAssignments;
 
 }
