@@ -1,6 +1,7 @@
 package ua.foxminded.universitycms.model.entity.user.universityuserdata;
 
 import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
@@ -20,7 +21,7 @@ import ua.foxminded.universitycms.model.entity.user.User;
 @Entity
 @Table(name = "university_user_data")
 @Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(name = "data_type")
+@DiscriminatorColumn(name = "data_type", discriminatorType = DiscriminatorType.STRING)
 @NoArgsConstructor
 @AllArgsConstructor
 @Data

@@ -12,7 +12,7 @@ import lombok.experimental.SuperBuilder;
 @Entity
 @Table(name = "admin_data")
 @PrimaryKeyJoinColumn(name = "id")
-@DiscriminatorValue("STUDENT")
+@DiscriminatorValue("ADMIN")
 @NoArgsConstructor
 @SuperBuilder(setterPrefix = "with")
 @Data

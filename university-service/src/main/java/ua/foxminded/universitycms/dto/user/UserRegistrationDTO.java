@@ -19,7 +19,7 @@ public class UserRegistrationDTO {
   private String email;
 
   @NotBlank(message = "Password cannot be blank")
-  @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$",
+  @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*])[A-Za-z\\d!@#$%^&*]{8,}$",
       message = "The password must contain a minimum of 8 characters, including one uppercase"
           + " letter, one lowercase letter, one number, and one special character")
   private String password;
