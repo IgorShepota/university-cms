@@ -13,6 +13,7 @@
     <div class="container mt-5">
       <h1 class="mb-4">Registration</h1>
       <form th:object="${user}" th:action="@{/user/registration}" th:method="POST">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
 
         <div class="mb-3">
           <label for="email" class="form-label">Email address</label>
@@ -26,7 +27,7 @@
         <div class="mb-3">
           <label for="password" class="form-label">Password</label>
           <input type="password" class="form-control" th:field="*{password}" id="password"
-                 pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+                 pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$"
                  title="The password must contain a minimum of 8 characters, including one uppercase
                   letter, one lowercase letter, one number, and one special character"
                  required>

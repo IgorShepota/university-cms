@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import ua.foxminded.universitycms.service.user.UserService;
 
 @Controller
-@RequestMapping("teachers")
+@RequestMapping("/teachers")
 @RequiredArgsConstructor
 public class TeacherController {
 

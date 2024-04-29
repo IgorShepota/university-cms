@@ -18,6 +18,11 @@ public class UserController {
 
   private final UserService userService;
 
+  @GetMapping("/login")
+  public String showLoginForm() {
+    return "user/login";
+  }
+
   @GetMapping("/registration")
   public String showRegistrationForm(@ModelAttribute("user") UserRegistrationDTO user) {
     return "user/registration";
@@ -33,11 +38,6 @@ public class UserController {
     userService.registerUser(user);
 
     return "redirect:/user/login";
-  }
-
-  @GetMapping("/login")
-  public String showLoginForm() {
-    return "user/login";
   }
 
 }
