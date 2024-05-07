@@ -1,5 +1,7 @@
 package ua.foxminded.universitycms.model.entity.user;
 
+import java.time.LocalDateTime;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -17,6 +19,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 import ua.foxminded.universitycms.model.entity.user.role.Role;
 import ua.foxminded.universitycms.model.entity.user.universityuserdata.UniversityUserData;
@@ -42,9 +45,6 @@ public class User {
   private String email;
 
   @Column(name = "password", nullable = false)
-  @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*])[A-Za-z\\d!@#$%^&*]{8,}$",
-      message = "The password must contain a minimum of 8 characters, including one uppercase"
-          + " letter, one lowercase letter, one number, and one special character")
   private String password;
 
   @Column(name = "first_name", nullable = false)
@@ -65,7 +65,11 @@ public class User {
   @JoinColumn(name = "role_id", nullable = false)
   private Role role;
 
-  @OneToOne(mappedBy = "user")
+  @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
   private UniversityUserData universityUserData;
+
+  @CreationTimestamp
+  @Column(name = "creation_date_time", nullable = false)
+  private LocalDateTime creationDateTime;
 
 }

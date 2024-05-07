@@ -1,5 +1,6 @@
 package ua.foxminded.universitycms.dto.user;
 
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,5 +18,6 @@ public class UserDTO {
   private String lastName;
   private String gender;
   private String roleName;
+  private LocalDateTime creationDateTime;
 
 }

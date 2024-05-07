@@ -16,6 +16,7 @@ public interface StudentMapper {
   @Mapping(source = "user.gender", target = "gender")
   @Mapping(source = "user.role.name", target = "roleName")
   @Mapping(source = "studentData.ownerGroup.name", target = "groupName")
+  @Mapping(source = "user.creationDateTime", target = "creationDateTime")
   StudentDTO mapToStudentDTO(User user, StudentData studentData);
 
 }

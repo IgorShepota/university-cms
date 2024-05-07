@@ -23,7 +23,7 @@ import ua.foxminded.universitycms.model.entity.Group;
 public class StudentData extends UniversityUserData {
 
   @ManyToOne
-  @JoinColumn(name = "group_id", referencedColumnName = "id", nullable = false)
+  @JoinColumn(name = "group_id", referencedColumnName = "id")
   private Group ownerGroup;
 
 }

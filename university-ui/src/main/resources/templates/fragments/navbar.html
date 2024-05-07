@@ -17,8 +17,8 @@
                  th:classappend="${#httpServletRequest.requestURI == '/' ? 'active' : ''}" href="/">Home</a>
             </li>
             <li sec:authorize="hasAuthority('ROLE_ADMIN')" class="nav-item">
-              <a class="nav-link" th:href="@{/users}"
-                 th:classappend="${#httpServletRequest.requestURI == '/users' ? 'active' : ''}">Users</a>
+              <a class="nav-link" th:href="@{/user/list}"
+                 th:classappend="${#httpServletRequest.requestURI == '/user/list' ? 'active' : ''}">Users</a>
             </li>
             <li class="nav-item">
               <a class="nav-link"

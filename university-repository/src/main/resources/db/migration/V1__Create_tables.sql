@@ -26,16 +26,15 @@ CREATE TABLE roles
 
 CREATE TABLE users
 (
-  id                      VARCHAR(36) PRIMARY KEY,
-  email                   VARCHAR(255) NOT NULL UNIQUE,
-  password                VARCHAR(255) NOT NULL,
-  first_name              VARCHAR(255) NOT NULL,
-  last_name               VARCHAR(255) NOT NULL,
-  gender                  VARCHAR(255) NOT NULL CHECK (gender IN ('Male', 'Female')),
-  role_id                 VARCHAR(36)  NOT NULL,
-  university_user_data_id VARCHAR(36),
-  FOREIGN KEY (role_id) REFERENCES roles (id),
-  UNIQUE (email, university_user_data_id)
+  id                 VARCHAR(36) PRIMARY KEY,
+  email              VARCHAR(255)                        NOT NULL UNIQUE,
+  password           VARCHAR(255)                        NOT NULL,
+  first_name         VARCHAR(255)                        NOT NULL,
+  last_name          VARCHAR(255)                        NOT NULL,
+  gender             VARCHAR(255)                        NOT NULL CHECK (gender IN ('Male', 'Female')),
+  role_id            VARCHAR(36)                         NOT NULL,
+  creation_date_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+  FOREIGN KEY (role_id) REFERENCES roles (id)
 );
 
 CREATE TABLE university_user_data
@@ -48,21 +47,21 @@ CREATE TABLE university_user_data
 CREATE TABLE admin_data
 (
   id VARCHAR(36) PRIMARY KEY,
-  FOREIGN KEY (id) REFERENCES university_user_data (id)
+  FOREIGN KEY (id) REFERENCES university_user_data (id) ON DELETE CASCADE
 );
 
 CREATE TABLE teacher_data
 (
   id VARCHAR(36) PRIMARY KEY,
-  FOREIGN KEY (id) REFERENCES university_user_data (id)
+  FOREIGN KEY (id) REFERENCES university_user_data (id) ON DELETE CASCADE
 );
 
 CREATE TABLE student_data
 (
   id       VARCHAR(36) PRIMARY KEY,
-  group_id VARCHAR(36) NOT NULL,
-  FOREIGN KEY (id) REFERENCES university_user_data (id),
-  FOREIGN KEY (group_id) REFERENCES groups (id)
+  group_id VARCHAR(36),
+  FOREIGN KEY (id) REFERENCES university_user_data (id) ON DELETE CASCADE,
+  FOREIGN KEY (group_id) REFERENCES groups (id) ON DELETE SET NULL
 );
 
 CREATE TABLE teachers_courses
@@ -79,10 +78,10 @@ CREATE TABLE course_assignments
   id              VARCHAR(36) PRIMARY KEY,
   group_id        VARCHAR(36) NOT NULL,
   course_id       VARCHAR(36) NOT NULL,
-  teacher_data_id VARCHAR(36) NOT NULL,
+  teacher_data_id VARCHAR(36),
   FOREIGN KEY (course_id) REFERENCES courses (id),
   FOREIGN KEY (group_id) REFERENCES groups (id),
-  FOREIGN KEY (teacher_data_id) REFERENCES teacher_data (id),
+  FOREIGN KEY (teacher_data_id) REFERENCES teacher_data (id) ON DELETE SET NULL,
   UNIQUE (group_id, course_id, teacher_data_id)
 );
 
