@@ -7,7 +7,10 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ua.foxminded.universitycms.dto.user.UserDTO;
 import ua.foxminded.universitycms.dto.user.UserRegistrationDTO;
 import ua.foxminded.universitycms.dto.user.role.StudentDTO;
@@ -16,10 +19,14 @@ import ua.foxminded.universitycms.mapping.user.role.StudentMapper;
 import ua.foxminded.universitycms.model.entity.user.User;
 import ua.foxminded.universitycms.model.entity.user.role.Role;
 import ua.foxminded.universitycms.model.entity.user.role.RoleName;
+import ua.foxminded.universitycms.model.entity.user.universityuserdata.AdminData;
 import ua.foxminded.universitycms.model.entity.user.universityuserdata.StudentData;
+import ua.foxminded.universitycms.model.entity.user.universityuserdata.TeacherData;
+import ua.foxminded.universitycms.model.entity.user.universityuserdata.UniversityUserData;
 import ua.foxminded.universitycms.repository.user.UserRepository;
 import ua.foxminded.universitycms.repository.user.role.RoleRepository;
 import ua.foxminded.universitycms.repository.user.universityuserdata.StudentDataRepository;
+import ua.foxminded.universitycms.repository.user.universityuserdata.UniversityUserDataRepository;
 import ua.foxminded.universitycms.service.user.UserService;
 
 @Service
@@ -30,6 +37,7 @@ public class UserServiceImpl implements UserService {
   private final UserMapper userMapper;
   private final StudentMapper studentMapper;
   private final UserRepository userRepository;
+  private final UniversityUserDataRepository universityUserDataRepository;
   private final StudentDataRepository studentDataRepository;
   private final RoleRepository roleRepository;
 
@@ -54,6 +62,15 @@ public class UserServiceImpl implements UserService {
   public List<UserDTO> getAllUsers() {
     log.info("Fetching all users.");
     return userRepository.findAll().stream()
+        .map(userMapper::userToUserDTO)
+        .collect(Collectors.toList());
+  }
+
+  @Override
+  public List<UserDTO> getAllUsersSorted(String sort, String order) {
+    Sort.Direction dir = "desc".equalsIgnoreCase(order) ? Direction.DESC : Direction.ASC;
+    Sort sorted = Sort.by(dir, sort);
+    return userRepository.findAll(sorted).stream()
         .map(userMapper::userToUserDTO)
         .collect(Collectors.toList());
   }
@@ -94,6 +111,40 @@ public class UserServiceImpl implements UserService {
     return userRepository.findAll(pageable).getContent().stream()
         .map(userMapper::userToUserDTO)
         .collect(Collectors.toList());
+  }
+
+  @Override
+  @Transactional
+  public void updateUserRole(String userId, String newRoleName) {
+    User user = userRepository.findById(userId)
+        .orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
+    Role role = roleRepository.findByName(RoleName.valueOf(newRoleName))
+        .orElseThrow(() -> new IllegalArgumentException("Invalid role name: " + newRoleName));
+
+    if (user.getRole().getName().name().equals("UNVERIFIED")
+        && user.getUniversityUserData() == null) {
+      UniversityUserData newUserData = createUniversityUserDataForRole(newRoleName, user);
+      universityUserDataRepository.save(newUserData);
+      user.setUniversityUserData(newUserData);
+      userRepository.saveAndFlush(user);
+    }
+
+    user.setRole(role);
+    userRepository.save(user);
+    log.info("Role for user {} updated to {}", userId, newRoleName);
+  }
+
+  private UniversityUserData createUniversityUserDataForRole(String roleName, User user) {
+    switch (roleName) {
+      case "ADMIN":
+        return AdminData.builder().withUser(user).build();
+      case "STUDENT":
+        return StudentData.builder().withUser(user).build();
+      case "TEACHER":
+        return TeacherData.builder().withUser(user).build();
+      default:
+        throw new IllegalArgumentException("Unsupported role for user data creation:" + roleName);
+    }
   }
 
 }

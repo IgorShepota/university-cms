@@ -1,5 +1,6 @@
 package ua.foxminded.universitycms.controller;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -7,6 +8,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -23,7 +25,8 @@ class StudentControllerTest {
   private UserService userService;
 
   @Test
-  void testListStudents() throws Exception {
+  @WithMockUser
+  void listStudentsShouldReturnPageWithListedStudents() throws Exception {
     List<StudentDTO> students = Arrays.asList(
         StudentDTO.builder()
             .id("1")
@@ -33,6 +36,7 @@ class StudentControllerTest {
             .gender("Male")
             .roleName("Student")
             .groupName("Computer Science")
+            .creationDateTime(LocalDateTime.now())
             .build(),
         StudentDTO.builder()
             .id("2")
@@ -42,6 +46,7 @@ class StudentControllerTest {
             .gender("Female")
             .roleName("Student")
             .groupName("Mathematics")
+            .creationDateTime(LocalDateTime.now())
             .build()
     );
 

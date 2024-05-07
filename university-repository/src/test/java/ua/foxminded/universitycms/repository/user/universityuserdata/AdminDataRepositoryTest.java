@@ -15,7 +15,7 @@ class AdminDataRepositoryTest extends AbstractRepositoryTest {
 
   @Test
   void findByIdShouldReturnAdminDataWhenIdExists() {
-    String expectedId = "1a9d5f8e-a8d8-11ed-a8fc-0242ac120005";
+    String expectedId = "1a9d5f8e-a8d8-11ed-a8fc-0242ac120001";
 
     Optional<AdminData> optionalAdminData = adminDataRepository.findById(expectedId);
 

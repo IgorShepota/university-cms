@@ -15,7 +15,7 @@ class TeacherDataRepositoryTest extends AbstractRepositoryTest {
 
   @Test
   void findByIdShouldReturnTeacherDataWhenIdExists() {
-    String expectedId = "1a9d5f8e-a8d8-11ed-a8fc-0242ac120004";
+    String expectedId = "1a9d5f8e-a8d8-11ed-a8fc-0242ac120002";
 
     Optional<TeacherData> optionalTeacherData = teacherDataRepository.findById(expectedId);
 

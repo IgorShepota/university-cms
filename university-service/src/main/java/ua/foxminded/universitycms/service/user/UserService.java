@@ -9,6 +9,8 @@ public interface UserService {
 
   void registerUser(UserRegistrationDTO userRegistrationDTO);
 
+  List<UserDTO> getAllUsersSorted(String sort, String order);
+
   List<StudentDTO> getAllStudents();
 
   List<UserDTO> getAllTeachers();
@@ -16,5 +18,7 @@ public interface UserService {
   List<UserDTO> getAllUsers();
 
   List<UserDTO> getAllUsers(Integer page, Integer itemsPerPage);
+
+  void updateUserRole(String userId, String roleNName);
 
 }

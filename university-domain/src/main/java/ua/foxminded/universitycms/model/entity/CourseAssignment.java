@@ -42,7 +42,7 @@ public class CourseAssignment {
   private Course course;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "teacher_data_id", nullable = false)
+  @JoinColumn(name = "teacher_data_id")
   private TeacherData teacherData;
 
   @OneToMany(mappedBy = "courseAssignment", fetch = FetchType.LAZY)
