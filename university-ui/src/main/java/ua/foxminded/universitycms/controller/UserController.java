@@ -29,11 +29,13 @@ public class UserController {
 
   @GetMapping("/login")
   public String showLoginForm() {
+
     return "user/login";
   }
 
   @GetMapping("/registration")
   public String showRegistrationForm(@ModelAttribute("user") UserRegistrationDTO user) {
+
     return "user/registration";
   }
 
@@ -58,6 +60,7 @@ public class UserController {
     model.addAttribute("users", users);
     model.addAttribute("sortField", sort);
     model.addAttribute("sortOrder", order);
+
     return "user/list";
   }
 

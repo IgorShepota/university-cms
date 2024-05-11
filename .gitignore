@@ -1,8 +1,10 @@
 target
 .idea
 /data
+data
 .mvn
 logs
 *.iml
 mvnw
 mvnw.cmd
+university-repository/data

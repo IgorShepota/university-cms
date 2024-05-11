@@ -14,26 +14,25 @@ import lombok.NoArgsConstructor;
 @Builder
 public class UserRegistrationDTO {
 
-  @NotBlank(message = "Email cannot be blank")
-  @Email(message = "Email should be valid")
+  @NotBlank(message = "{email.required}")
+  @Email(message = "{email.valid}")
   private String email;
 
-  @NotBlank(message = "Password cannot be blank")
+  @NotBlank(message = "{password.required}")
   @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*])[A-Za-z\\d!@#$%^&*]{8,}$",
-      message = "The password must contain a minimum of 8 characters, including one uppercase"
-          + " letter, one lowercase letter, one number, and one special character")
+      message = "{password.pattern}")
   private String password;
 
-  @NotBlank(message = "First name cannot be blank")
-  @Pattern(regexp = "^[a-zA-Zа-яА-Я]+$", message = "First name should contain only letters")
+  @NotBlank(message = "{firstname.required}")
+  @Pattern(regexp = "^[a-zA-Zа-яА-Я]+$", message = "{firstname.pattern}")
   private String firstName;
 
-  @NotBlank(message = "Last name cannot be blank")
-  @Pattern(regexp = "^[a-zA-Zа-яА-Я]+$", message = "Last name should contain only letters")
+  @NotBlank(message = "{lastname.required}")
+  @Pattern(regexp = "^[a-zA-Zа-яА-Я]+$", message = "{lastname.pattern}")
   private String lastName;
 
-  @NotBlank(message = "Gender cannot be blank")
-  @Pattern(regexp = "^(Male|Female)$", message = "Gender must be either Male or Female")
+  @NotBlank(message = "{gender.required}")
+  @Pattern(regexp = "^(Male|Female)$", message = "{gender.pattern}")
   private String gender;
 
 }

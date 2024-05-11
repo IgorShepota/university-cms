@@ -19,16 +19,14 @@
           <label for="username" class="form-label">Email address</label>
           <input type="email" class="form-control" name="username" id="username"
                  pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
-                 title="Enter a valid email address" required>
+                 th:title="#{email.title}" required>
         </div>
 
         <div class="mb-3">
           <label for="password" class="form-label">Password</label>
           <input type="password" class="form-control" name="password" id="password"
                  pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$"
-                 title="The password must contain a minimum of 8 characters, including one uppercase
-                  letter, one lowercase letter, one number, and one special character"
-                 required>
+                 th:title="#{password.title}" required>
         </div>
 
         <button type="submit" class="btn btn-primary">Login</button>
