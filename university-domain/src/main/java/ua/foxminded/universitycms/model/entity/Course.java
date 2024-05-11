@@ -10,6 +10,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -35,10 +36,13 @@ public class Course {
   private String id;
 
   @Column(name = "name", nullable = false, unique = true)
-  @NotBlank(message = "Course name cannot be blank")
+  @NotBlank(message = "Course name is required.")
+  @Size(min = 5, max = 100, message = "Course name must be between 5 and 100 characters.")
   private String name;
 
   @Column(name = "description", nullable = false, unique = true)
+  @NotBlank(message = "Description is required.")
+  @Size(min = 10, max = 100, message = "Description must be between 10 and 1000 characters.")
   private String description;
 
   @ManyToMany(mappedBy = "courses", fetch = FetchType.LAZY)

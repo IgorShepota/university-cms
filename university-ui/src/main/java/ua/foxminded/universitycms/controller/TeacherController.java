@@ -16,8 +16,8 @@ public class TeacherController {
 
   @GetMapping
   public String listTeachers(Model model) {
-
     model.addAttribute("teachers", userService.getAllTeachers());
+
     return "teachers";
   }
 

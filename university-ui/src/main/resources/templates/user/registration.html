@@ -19,7 +19,7 @@
           <label for="email" class="form-label">Email address</label>
           <input type="email" class="form-control" th:field="*{email}" id="email"
                  pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
-                 title="Enter a valid email address" required>
+                 th:title="#{email.title}" required>
           <p style="color:red" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"
              class="text-danger"></p>
         </div>
@@ -28,9 +28,7 @@
           <label for="password" class="form-label">Password</label>
           <input type="password" class="form-control" th:field="*{password}" id="password"
                  pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$"
-                 title="The password must contain a minimum of 8 characters, including one uppercase
-                  letter, one lowercase letter, one number, and one special character"
-                 required>
+                 th:title="#{password.title}" required>
           <p style="color:red" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"
              class="text-danger"></p>
         </div>
@@ -39,7 +37,7 @@
           <label for="firstName" class="form-label">First Name</label>
           <input type="text" class="form-control" th:field="*{firstName}" id="firstName"
                  pattern="^[a-zA-Zа-яА-Я]+$"
-                 title="Enter only letters" required>
+                 th:title="#{firstName.title}" required>
           <p style="color:red" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"
              class="text-danger"></p>
         </div>
@@ -48,7 +46,7 @@
           <label for="lastName" class="form-label">Last Name</label>
           <input type="text" class="form-control" th:field="*{lastName}" id="lastName"
                  pattern="^[a-zA-Zа-яА-Я]+$"
-                 title="Enter only letters" required>
+                 th:title="#{lastName.title}" required>
           <p style="color:red" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"
              class="text-danger"></p>
         </div>
