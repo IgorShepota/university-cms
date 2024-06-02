@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ua.foxminded.universitycms.model.entity.CourseStatus;
 
 @Data
 @NoArgsConstructor
@@ -22,5 +23,7 @@ public class CourseDTO {
   @NotBlank(message = "{description.required}")
   @Size(min = 10, max = 1000, message = "{description.size}")
   private String description;
+
+  private CourseStatus status;
 
 }

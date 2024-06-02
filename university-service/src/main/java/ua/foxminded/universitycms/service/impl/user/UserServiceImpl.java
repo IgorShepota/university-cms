@@ -27,6 +27,10 @@ import ua.foxminded.universitycms.repository.user.UserRepository;
 import ua.foxminded.universitycms.repository.user.role.RoleRepository;
 import ua.foxminded.universitycms.repository.user.universityuserdata.StudentDataRepository;
 import ua.foxminded.universitycms.repository.user.universityuserdata.UniversityUserDataRepository;
+import ua.foxminded.universitycms.service.exception.InvalidRoleNameException;
+import ua.foxminded.universitycms.service.exception.RoleNotFoundException;
+import ua.foxminded.universitycms.service.exception.UnsupportedRoleException;
+import ua.foxminded.universitycms.service.exception.UserNotFoundException;
 import ua.foxminded.universitycms.service.user.UserService;
 
 @Service
@@ -47,7 +51,7 @@ public class UserServiceImpl implements UserService {
 
     Optional<Role> unverifiedRoleOptional = roleRepository.findByName(RoleName.UNVERIFIED);
     Role unverifiedRole = unverifiedRoleOptional.orElseThrow(
-        () -> new RuntimeException("Unverified role not found"));
+        () -> new RoleNotFoundException("Unverified role not found"));
 
     user.setRole(unverifiedRole);
     userRepository.save(user);
@@ -117,9 +121,9 @@ public class UserServiceImpl implements UserService {
   @Transactional
   public void updateUserRole(String userId, String newRoleName) {
     User user = userRepository.findById(userId)
-        .orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
+        .orElseThrow(() -> new UserNotFoundException("Invalid user ID"));
     Role role = roleRepository.findByName(RoleName.valueOf(newRoleName))
-        .orElseThrow(() -> new IllegalArgumentException("Invalid role name: " + newRoleName));
+        .orElseThrow(() -> new InvalidRoleNameException("Invalid role name: " + newRoleName));
 
     if (user.getRole().getName().name().equals("UNVERIFIED")
         && user.getUniversityUserData() == null) {
@@ -143,7 +147,7 @@ public class UserServiceImpl implements UserService {
       case "TEACHER":
         return TeacherData.builder().withUser(user).build();
       default:
-        throw new IllegalArgumentException("Unsupported role for user data creation:" + roleName);
+        throw new UnsupportedRoleException("Unsupported role for user data creation:" + roleName);
     }
   }
 

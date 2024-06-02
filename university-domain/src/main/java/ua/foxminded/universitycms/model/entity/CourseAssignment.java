@@ -16,6 +16,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import ua.foxminded.universitycms.model.entity.user.universityuserdata.TeacherData;
 
 @Entity
@@ -38,7 +40,8 @@ public class CourseAssignment {
   private Group group;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "course_id", nullable = false)
+  @JoinColumn(name = "course_id")
+  @OnDelete(action = OnDeleteAction.NO_ACTION)
   private Course course;
 
   @ManyToOne(fetch = FetchType.LAZY)

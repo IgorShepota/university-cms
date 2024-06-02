@@ -3,6 +3,8 @@ package ua.foxminded.universitycms.model.entity;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -44,6 +46,10 @@ public class Course {
   @NotBlank(message = "Description is required.")
   @Size(min = 10, max = 100, message = "Description must be between 10 and 1000 characters.")
   private String description;
+
+  @Column(name = "status", nullable = false)
+  @Enumerated(EnumType.STRING)
+  private CourseStatus status = CourseStatus.ACTIVE;
 
   @ManyToMany(mappedBy = "courses", fetch = FetchType.LAZY)
   private List<TeacherData> teachers;
