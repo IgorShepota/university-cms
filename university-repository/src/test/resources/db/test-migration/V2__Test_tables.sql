@@ -14,7 +14,8 @@ CREATE TABLE courses
 (
   id          VARCHAR(36) PRIMARY KEY,
   name        VARCHAR(255) NOT NULL UNIQUE,
-  description TEXT         NOT NULL UNIQUE
+  description TEXT         NOT NULL UNIQUE,
+  status      VARCHAR(10)  NOT NULL DEFAULT 'ACTIVE' CHECK (status IN ('ACTIVE', 'INACTIVE'))
 );
 
 CREATE TABLE roles
@@ -70,16 +71,16 @@ CREATE TABLE teachers_courses
   course_id       VARCHAR(36) NOT NULL,
   PRIMARY KEY (teacher_data_id, course_id),
   FOREIGN KEY (teacher_data_id) REFERENCES teacher_data (id) ON DELETE CASCADE,
-  FOREIGN KEY (course_id) REFERENCES courses (id) ON DELETE CASCADE
+  FOREIGN KEY (course_id) REFERENCES courses (id) ON DELETE RESTRICT
 );
 
 CREATE TABLE course_assignments
 (
   id              VARCHAR(36) PRIMARY KEY,
   group_id        VARCHAR(36) NOT NULL,
-  course_id       VARCHAR(36) NOT NULL,
+  course_id       VARCHAR(36),
   teacher_data_id VARCHAR(36),
-  FOREIGN KEY (course_id) REFERENCES courses (id),
+  FOREIGN KEY (course_id) REFERENCES courses (id) ON DELETE RESTRICT,
   FOREIGN KEY (group_id) REFERENCES groups (id),
   FOREIGN KEY (teacher_data_id) REFERENCES teacher_data (id) ON DELETE SET NULL,
   UNIQUE (group_id, course_id, teacher_data_id)

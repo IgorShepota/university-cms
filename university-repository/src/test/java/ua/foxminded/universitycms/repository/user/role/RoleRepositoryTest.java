@@ -27,7 +27,7 @@ class RoleRepositoryTest extends AbstractRepositoryTest {
   void findByNameShouldReturnCorrectRoleWhenNameIsCorrect() {
     String expectedId = "6a9d5f8e-a8d8-11ed-a8fc-0242ac120002";
 
-    Optional<Role> role = roleRepository.findByName(RoleName.UNVERIFIED);
+    Optional<Role> role = roleRepository.findByName(RoleName.TEACHER);
 
     assertThat(role).isNotEmpty();
     assertThat(role.get().getId()).isEqualTo(expectedId);

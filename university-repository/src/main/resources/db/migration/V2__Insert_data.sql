@@ -12,10 +12,10 @@ VALUES ('7a9d5f8e-a8d8-11ed-a8fc-0242ac120001', 'FLA-101'),
        ('7a9d5f8e-a8d8-11ed-a8fc-0242ac120003', 'FLA-103');
 
 -- Таблица courses
-INSERT INTO courses (id, name, description)
-VALUES ('8a9d5f8e-a8d8-11ed-a8fc-0242ac120001', 'Java Programming', 'Introduction to Java programming language'),
-       ('8a9d5f8e-a8d8-11ed-a8fc-0242ac120002', 'Database Systems', 'Principles of database design and management'),
-       ('8a9d5f8e-a8d8-11ed-a8fc-0242ac120003', 'Web Development', 'Building modern web applications');
+INSERT INTO courses (id, name, description, status)
+VALUES ('8a9d5f8e-a8d8-11ed-a8fc-0242ac120001', 'Java Programming', 'Introduction to Java programming language', 'ACTIVE'),
+       ('8a9d5f8e-a8d8-11ed-a8fc-0242ac120002', 'Database Systems', 'Principles of database design and management', 'ACTIVE'),
+       ('8a9d5f8e-a8d8-11ed-a8fc-0242ac120003', 'Web Development', 'Building modern web applications', 'INACTIVE');
 
 -- Таблица classrooms
 INSERT INTO classrooms (id, name)
@@ -62,7 +62,7 @@ VALUES ('1a9d5f8e-a8d8-11ed-a8fc-0242ac120002', '8a9d5f8e-a8d8-11ed-a8fc-0242ac1
 INSERT INTO course_assignments (id, group_id, course_id, teacher_data_id)
 VALUES ('3a9d5f8e-a8d8-11ed-a8fc-0242ac120002', '7a9d5f8e-a8d8-11ed-a8fc-0242ac120001', '8a9d5f8e-a8d8-11ed-a8fc-0242ac120001', '1a9d5f8e-a8d8-11ed-a8fc-0242ac120002'),
        ('3a9d5f8e-a8d8-11ed-a8fc-0242ac120003', '7a9d5f8e-a8d8-11ed-a8fc-0242ac120002', '8a9d5f8e-a8d8-11ed-a8fc-0242ac120002', '1a9d5f8e-a8d8-11ed-a8fc-0242ac120002'),
-       ('3a9d5f8e-a8d8-11ed-a8fc-0242ac120004', '7a9d5f8e-a8d8-11ed-a8fc-0242ac120003', '8a9d5f8e-a8d8-11ed-a8fc-0242ac120003', '1a9d5f8e-a8d8-11ed-a8fc-0242ac120002');
+       ('3a9d5f8e-a8d8-11ed-a8fc-0242ac120004', '7a9d5f8e-a8d8-11ed-a8fc-0242ac120003', '8a9d5f8e-a8d8-11ed-a8fc-0242ac120001', '1a9d5f8e-a8d8-11ed-a8fc-0242ac120002');
 
 -- Таблица lessons
 INSERT INTO lessons (id, date, start_time, end_time, classroom_id, course_assignment_id)

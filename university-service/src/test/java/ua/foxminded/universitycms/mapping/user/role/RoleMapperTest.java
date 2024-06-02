@@ -9,7 +9,7 @@ import ua.foxminded.universitycms.dto.user.role.RoleDTO;
 import ua.foxminded.universitycms.model.entity.user.role.Role;
 import ua.foxminded.universitycms.model.entity.user.role.RoleName;
 
-class RoleMapperTest {
+class   RoleMapperTest {
 
   private final RoleMapper mapper = Mappers.getMapper(RoleMapper.class);
 
@@ -27,6 +27,19 @@ class RoleMapperTest {
   }
 
   @Test
+  void roleToRoleDTOShouldMapRoleWhenRoleNameIsNull() {
+    Role role = new Role();
+    role.setId("1");
+    role.setName(null);
+
+    RoleDTO roleDTO = mapper.roleToRoleDTO(role);
+
+    assertThat(roleDTO).isNotNull();
+    assertThat(roleDTO.getId()).isEqualTo("1");
+    assertThat(roleDTO.getName()).isNull();
+  }
+
+  @Test
   void roleDTOToRoleShouldWorkCorrectlyIfDataCorrect() {
     RoleDTO roleDTO = new RoleDTO();
     String uuid = UUID.randomUUID().toString();
@@ -37,6 +50,19 @@ class RoleMapperTest {
 
     assertThat(role.getId()).isEqualTo(roleDTO.getId());
     assertThat(role.getName().name()).isEqualTo(roleDTO.getName());
+  }
+
+  @Test
+  void roleDTOToRoleShouldMapRoleDTOWhenRoleNameIsNull() {
+    RoleDTO roleDTO = new RoleDTO();
+    roleDTO.setId("1");
+    roleDTO.setName(null);
+
+    Role role = mapper.roleDTOToRole(roleDTO);
+
+    assertThat(role).isNotNull();
+    assertThat(role.getId()).isEqualTo("1");
+    assertThat(role.getName()).isEqualTo(RoleName.UNVERIFIED);
   }
 
   @Test

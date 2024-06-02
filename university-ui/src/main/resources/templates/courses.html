@@ -67,6 +67,7 @@
           <th scope="col">ID</th>
           <th scope="col">Name</th>
           <th scope="col">Description</th>
+          <th scope="col">Status</th>
           <th sec:authorize="hasRole('ADMIN')" scope="col">Actions</th>
         </tr>
         </thead>
@@ -82,9 +83,23 @@
             <input type="text" th:value="${course.description}"
                    class="edit-description form-control d-none">
           </td>
+          <td th:text="${course.status}">Status</td>
           <td sec:authorize="hasRole('ADMIN')">
-            <button class="btn btn-secondary btn-sm edit-btn">Edit</button>
-            <button class="btn btn-primary btn-sm save-btn d-none">Save</button>
+            <button th:if="${course.status == T(ua.foxminded.universitycms.model.entity.CourseStatus).ACTIVE}"
+                    class="btn btn-warning btn-sm deactivate-btn">Deactivate
+            </button>
+            <button th:if="${course.status == T(ua.foxminded.universitycms.model.entity.CourseStatus).INACTIVE}"
+                    class="btn btn-primary btn-sm activate-btn">Activate
+            </button>
+            <button th:if="${course.status == T(ua.foxminded.universitycms.model.entity.CourseStatus).INACTIVE}"
+                    class="btn btn-danger btn-sm delete-btn">Delete
+            </button>
+            <button th:if="${course.status == T(ua.foxminded.universitycms.model.entity.CourseStatus).ACTIVE}"
+                    class="btn btn-secondary btn-sm edit-btn">Edit
+            </button>
+            <button th:if="${course.status == T(ua.foxminded.universitycms.model.entity.CourseStatus).ACTIVE}"
+                    class="btn btn-primary btn-sm save-btn d-none">Save
+            </button>
           </td>
         </tr>
         </tbody>
@@ -92,48 +107,122 @@
     </div>
 
     <script>
-      document.querySelectorAll('.edit-btn').forEach(btn => {
-        btn.addEventListener('click', function () {
-          const tr = this.closest('tr');
-          tr.querySelector('.name').classList.add('d-none');
-          tr.querySelector('.description').classList.add('d-none');
-          tr.querySelector('.edit-name').classList.remove('d-none');
-          tr.querySelector('.edit-description').classList.remove('d-none');
-          this.classList.add('d-none');
-          tr.querySelector('.save-btn').classList.remove('d-none');
+      document.addEventListener("DOMContentLoaded", function () {
+        // Handle deactivation
+        const deactivateButtons = document.querySelectorAll(".deactivate-btn");
+        deactivateButtons.forEach(button => {
+          button.addEventListener("click", function () {
+            const courseId = button.closest("tr").querySelector(
+                "td:first-child").textContent.trim();
+            fetch(`/courses/deactivate/${courseId}`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('input[name="_csrf"]').value
+              }
+            })
+            .then(response => {
+              if (response.ok) {
+                location.reload();
+              } else {
+                console.error('Deactivation failed');
+              }
+            });
+          });
         });
-      });
 
-      document.querySelectorAll('.save-btn').forEach(btn => {
-        btn.addEventListener('click', function () {
-          const tr = this.closest('tr');
-          const id = tr.cells[0].textContent.trim();
-          const newName = tr.querySelector('.edit-name').value;
-          const newDescription = tr.querySelector('.edit-description').value;
+        // Handle activation
+        const activateButtons = document.querySelectorAll(".activate-btn");
+        activateButtons.forEach(button => {
+          button.addEventListener("click", function () {
+            const courseId = button.closest("tr").querySelector(
+                "td:first-child").textContent.trim();
+            fetch(`/courses/activate/${courseId}`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('input[name="_csrf"]').value
+              }
+            })
+            .then(response => {
+              if (response.ok) {
+                location.reload();
+              } else {
+                console.error('Activation failed');
+              }
+            });
+          });
+        });
 
-          const csrfToken = document.querySelector('[name="_csrf"]').value;
+        // Handle deletion
+        const deleteButtons = document.querySelectorAll(".delete-btn");
+        deleteButtons.forEach(button => {
+          button.addEventListener("click", function () {
+            const courseId = button.closest("tr").querySelector(
+                "td:first-child").textContent.trim();
+            fetch(`/courses/delete/${courseId}`, {
+              method: 'DELETE',
+              headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('input[name="_csrf"]').value
+              }
+            })
+            .then(response => {
+              if (response.ok) {
+                location.reload();
+              } else {
+                console.error('Deletion failed');
+              }
+            });
+          });
+        });
 
-          const courseData = {
-            id: id,
-            name: newName,
-            description: newDescription
-          };
+        // Handle editing
+        document.querySelectorAll('.edit-btn').forEach(btn => {
+          btn.addEventListener('click', function () {
+            const tr = this.closest('tr');
+            tr.querySelector('.name').classList.add('d-none');
+            tr.querySelector('.description').classList.add('d-none');
+            tr.querySelector('.edit-name').classList.remove('d-none');
+            tr.querySelector('.edit-description').classList.remove('d-none');
+            this.classList.add('d-none');
+            tr.querySelector('.save-btn').classList.remove('d-none');
+          });
+        });
 
-          fetch('/courses/update', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'X-CSRF-TOKEN': csrfToken
-            },
-            body: JSON.stringify(courseData)
-          }).then(response => {
-            if (response.ok) {
-              window.location.reload();
-            } else {
-              alert('Failed to update the course.');
-              console.error('Server responded with status:', response.status);
-            }
-          }).catch(error => console.error('Error updating course:', error));
+        document.querySelectorAll('.save-btn').forEach(btn => {
+          btn.addEventListener('click', function () {
+            const tr = this.closest('tr');
+            const id = tr.cells[0].textContent.trim();
+            const newName = tr.querySelector('.edit-name').value;
+            const newDescription = tr.querySelector('.edit-description').value;
+            const status = tr.querySelector('td:nth-child(4)').textContent.trim();
+
+            const csrfToken = document.querySelector('[name="_csrf"]').value;
+
+            const courseData = {
+              id: id,
+              name: newName,
+              description: newDescription,
+              status: status
+            };
+
+            fetch('/courses/update', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken
+              },
+              body: JSON.stringify(courseData)
+            }).then(response => {
+              if (response.ok) {
+                window.location.reload();
+              } else {
+                alert('Failed to update the course.');
+                console.error('Server responded with status:', response.status);
+              }
+            }).catch(error => console.error('Error updating course:', error));
+          });
         });
       });
     </script>

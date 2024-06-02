@@ -41,6 +41,8 @@ import ua.foxminded.universitycms.repository.user.UserRepository;
 import ua.foxminded.universitycms.repository.user.role.RoleRepository;
 import ua.foxminded.universitycms.repository.user.universityuserdata.StudentDataRepository;
 import ua.foxminded.universitycms.repository.user.universityuserdata.UniversityUserDataRepository;
+import ua.foxminded.universitycms.service.exception.InvalidRoleNameException;
+import ua.foxminded.universitycms.service.exception.UserNotFoundException;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
@@ -278,7 +280,7 @@ class UserServiceImplTest {
     when(userRepository.findById(invalidUserId)).thenReturn(Optional.empty());
 
     assertThatThrownBy(() -> userService.updateUserRole(invalidUserId, "STUDENT"))
-        .isInstanceOf(IllegalArgumentException.class)
+        .isInstanceOf(UserNotFoundException.class)
         .hasMessageContaining("Invalid user ID");
 
     verify(userRepository).findById(invalidUserId);
@@ -303,7 +305,7 @@ class UserServiceImplTest {
         java.util.Optional.empty());
 
     assertThatThrownBy(() -> userService.updateUserRole(userId, newRoleName))
-        .isInstanceOf(IllegalArgumentException.class)
+        .isInstanceOf(InvalidRoleNameException.class)
         .hasMessage("Invalid role name: " + newRoleName);
   }
 
