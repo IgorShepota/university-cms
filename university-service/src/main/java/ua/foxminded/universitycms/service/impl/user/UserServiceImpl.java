@@ -1,7 +1,6 @@
 package ua.foxminded.universitycms.service.impl.user;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -9,11 +8,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ua.foxminded.universitycms.dto.user.UserDTO;
+import ua.foxminded.universitycms.dto.user.UserResponseDTO;
 import ua.foxminded.universitycms.dto.user.UserRegistrationDTO;
-import ua.foxminded.universitycms.dto.user.role.StudentDTO;
+import ua.foxminded.universitycms.dto.user.role.StudentResponseDTO;
 import ua.foxminded.universitycms.mapping.user.UserMapper;
 import ua.foxminded.universitycms.mapping.user.role.StudentMapper;
 import ua.foxminded.universitycms.model.entity.user.User;
@@ -44,10 +44,13 @@ public class UserServiceImpl implements UserService {
   private final UniversityUserDataRepository universityUserDataRepository;
   private final StudentDataRepository studentDataRepository;
   private final RoleRepository roleRepository;
+  private final PasswordEncoder passwordEncoder;
 
   @Override
   public void registerUser(UserRegistrationDTO userRegistrationDTO) {
     User user = userMapper.userRegistrationDTOToUser(userRegistrationDTO);
+
+    user.setPassword(passwordEncoder.encode(user.getPassword()));
 
     Optional<Role> unverifiedRoleOptional = roleRepository.findByName(RoleName.UNVERIFIED);
     Role unverifiedRole = unverifiedRoleOptional.orElseThrow(
@@ -57,63 +60,55 @@ public class UserServiceImpl implements UserService {
     userRepository.save(user);
   }
 
-  public Optional<UserDTO> getUserById(String id) {
+  public Optional<UserResponseDTO> getUserById(String id) {
     log.info("Fetching user with id {}.", id);
-    return userRepository.findById(id).map(userMapper::userToUserDTO);
+    return userRepository.findById(id).map(userMapper::userToUserResponseDTO);
   }
 
   @Override
-  public List<UserDTO> getAllUsers() {
+  public List<UserResponseDTO> getAllUsers() {
     log.info("Fetching all users.");
     return userRepository.findAll().stream()
-        .map(userMapper::userToUserDTO)
+        .map(userMapper::userToUserResponseDTO)
         .collect(Collectors.toList());
   }
 
   @Override
-  public List<UserDTO> getAllUsersSorted(String sort, String order) {
+  public List<UserResponseDTO> getAllUsersSorted(String sort, String order) {
     Sort.Direction dir = "desc".equalsIgnoreCase(order) ? Direction.DESC : Direction.ASC;
     Sort sorted = Sort.by(dir, sort);
     return userRepository.findAll(sorted).stream()
-        .map(userMapper::userToUserDTO)
+        .map(userMapper::userToUserResponseDTO)
         .collect(Collectors.toList());
   }
 
   @Override
-  public List<StudentDTO> getAllStudents() {
-    log.info("Fetching all students.");
-    List<User> studentUsers = userRepository.findAllByRoleName(RoleName.STUDENT);
-    List<StudentData> studentDataList = studentDataRepository.findAll();
+  public List<StudentResponseDTO> getAllStudentsSorted(String sort, String order) {
+    log.info("Fetching all students sorted by {} {}", sort, order);
 
-    return studentUsers.stream()
-        .map(studentUser -> {
-          String userId = studentUser.getId();
-          Optional<StudentData> studentDataOptional = studentDataList.stream()
-              .filter(studentData -> studentData.getId().equals(userId))
-              .findFirst();
+    boolean isAscending = "asc".equalsIgnoreCase(order);
 
-          return studentDataOptional.map(
-                  studentData -> studentMapper.mapToStudentDTO(studentUser, studentData))
-              .orElse(null);
-        })
-        .filter(Objects::nonNull)
+    List<StudentData> studentDataList = studentDataRepository.findAllWithSort(sort, isAscending);
+
+    return studentDataList.stream()
+        .map(studentMapper::mapToStudentResponseDTO)
         .collect(Collectors.toList());
   }
 
   @Override
-  public List<UserDTO> getAllTeachers() {
+  public List<UserResponseDTO> getAllTeachers() {
     log.info("Fetching all teachers.");
     return userRepository.findAllByRoleName(RoleName.TEACHER).stream()
-        .map(userMapper::userToUserDTO)
+        .map(userMapper::userToUserResponseDTO)
         .collect(Collectors.toList());
   }
 
   @Override
-  public List<UserDTO> getAllUsers(Integer page, Integer itemsPerPage) {
+  public List<UserResponseDTO> getAllUsers(Integer page, Integer itemsPerPage) {
     log.info("Fetching page {} of users with {} items per page.", page, itemsPerPage);
     Pageable pageable = Pageable.ofSize(itemsPerPage).withPage(page - 1);
     return userRepository.findAll(pageable).getContent().stream()
-        .map(userMapper::userToUserDTO)
+        .map(userMapper::userToUserResponseDTO)
         .collect(Collectors.toList());
   }
 

@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8">
+    <title>Group - University CMS</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+      .table th, .table td {
+        padding: 0.5rem;
+      }
+
+      .course-assignments-table {
+        margin-bottom: 2rem;
+      }
+
+      .action-buttons {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .students-header {
+        margin-top: 3rem;
+      }
+
+      .form-inline .form-select, .form-inline .btn {
+        margin-right: 0.5rem;
+      }
+
+      .custom-width {
+        width: 35%;
+      }
+
+      .table td, .table th {
+        vertical-align: middle;
+      }
+
+      .table .btn {
+        margin-top: -2px;
+        margin-bottom: -2px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navbar -->
+    <div th:replace="fragments/navbar :: navbar"></div>
+
+    <!-- Main container -->
+    <div class="container mt-5">
+      <!-- Group header -->
+      <div class="d-flex justify-content-between align-items-center">
+        <h3>
+          <span th:text="${group.name}">Group Name</span> - <span id="groupStatus"
+                                                                  th:text="${group.status}">Status</span>
+        </h3>
+        <div class="action-buttons">
+          <h5>Actions</h5>
+          <div>
+            <button class="btn btn-primary changeStatusButton" data-status="ACTIVE"
+                    th:if="${group.status == T(ua.foxminded.universitycms.model.entity.GroupStatus).NEW
+                        || group.status == T(ua.foxminded.universitycms.model.entity.GroupStatus).DELETING}">
+              Activate
+            </button>
+            <button class="btn btn-warning changeStatusButton" data-status="DELETING"
+                    th:if="${group.status == T(ua.foxminded.universitycms.model.entity.GroupStatus).ACTIVE}">
+              Deleting
+            </button>
+            <button id="deleteButton" class="btn btn-danger changeStatusButton"
+                    data-status="DELETED" style="display: none;">
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Course Assignments section -->
+      <h4 class="mt-4">Course Assignments</h4>
+      <div
+          th:if="${group.status == T(ua.foxminded.universitycms.model.entity.GroupStatus).NEW or group.status == T(ua.foxminded.universitycms.model.entity.GroupStatus).ACTIVE}"
+          class="mb-3">
+        <label for="availableAssignments" class="form-label">Add Course Assignment</label>
+        <div class="d-flex">
+          <select class="form-select custom-width" id="availableAssignments" name="assignmentId">
+            <option th:each="assignment : ${availableAssignments}"
+                    th:value="${assignment.id}"
+                    th:text="${assignment.courseName + ' - ' + assignment.teacherFullName}">
+              Course Assignment Name
+            </option>
+          </select>
+          <button class="btn btn-success ms-2" id="addAssignmentButton">Add</button>
+        </div>
+      </div>
+      <table class="table mt-2 course-assignments-table" id="course-assignments-table">
+        <thead>
+        <tr>
+          <th scope="col" class="col-1">Course Name</th>
+          <th scope="col" class="col-4">Teacher Name</th>
+          <th scope="col" class="col-1 text-end">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="assignment : ${group.courseAssignments}"
+            th:id="${'courseAssignment-' + assignment.id}">
+          <td th:text="${assignment.courseName}">CourseName</td>
+          <td th:text="${assignment.teacherFullName}">Teacher Name</td>
+          <td class="d-flex justify-content-end">
+            <button type="button" class="btn btn-danger removeCourseAssignmentButton"
+                    th:data-assignment-id="${assignment.id}">Remove
+            </button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+
+      <!-- Students section -->
+      <h4 class="students-header">Students</h4>
+      <div th:if="${group.status == T(ua.foxminded.universitycms.model.entity.GroupStatus).ACTIVE}"
+           class="mb-3">
+        <label for="availableStudents" class="form-label">Add Student</label>
+        <div class="d-flex">
+          <select class="form-select custom-width" id="availableStudents" name="studentId">
+            <option th:each="student : ${availableStudents}" th:value="${student.id}"
+                    th:text="${student.firstName + ' - ' + student.lastName}">Student Name
+            </option>
+          </select>
+          <button class="btn btn-success ms-2" id="addStudentButton">Add</button>
+        </div>
+      </div>
+      <table class="table mt-2" id="studentsTable">
+        <thead>
+        <tr>
+          <th scope="col">Student ID</th>
+          <th scope="col">Email</th>
+          <th scope="col">First Name</th>
+          <th scope="col">Last Name</th>
+          <th scope="col">Gender</th>
+          <th scope="col">Role Name</th>
+          <th scope="col">Creation Date</th>
+          <th scope="col" class="col-1 text-end">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="student : ${group.students}" th:id="${'student-' + student.id}">
+          <td th:text="${student.id}">Student ID</td>
+          <td th:text="${student.email}">Email</td>
+          <td th:text="${student.firstName}">First Name</td>
+          <td th:text="${student.lastName}">Last Name</td>
+          <td th:text="${student.gender.displayName}">Gender</td>
+          <td th:text="${student.roleName}">Role Name</td>
+          <td th:text="${#temporals.format(student.creationDateTime, 'yyyy-MM-dd HH:mm:ss')}">
+            Creation Date
+          </td>
+          <td class="d-flex justify-content-end">
+            <button type="button" class="btn btn-danger removeStudentButton"
+                    th:data-student-id="${student.id}">Remove
+            </button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- CSRF token -->
+    <input type="hidden" id="groupId" th:value="${group.id}"/>
+    <input type="hidden" id="_csrf" th:value="${_csrf.token}"/>
+
+    <!-- JavaScript -->
+    <script>
+      $(document).ready(function () {
+        var csrfToken = $('#_csrf').val();
+
+        // Update available course assignments
+        function updateAvailableCourseAssignments() {
+          var groupId = $('#groupId').val();
+          $.ajax({
+            url: '/groups/edit/available-courseAssignments',
+            type: 'GET',
+            success: function (assignments) {
+              var $select = $('#availableAssignments');
+              $select.empty();
+              $.each(assignments, function (index, assignment) {
+                $select.append($('<option>', {
+                  value: assignment.id,
+                  text: assignment.courseName + ' - ' + assignment.teacherFullName
+                }));
+              });
+            },
+            error: function (xhr, status, error) {
+              console.error('Failed to update available course assignments:', error);
+            }
+          });
+        }
+
+        // Update available students
+        function updateAvailableStudents() {
+          var groupId = $('#groupId').val();
+          $.ajax({
+            url: '/groups/edit/available-students',
+            type: 'GET',
+            success: function (students) {
+              var $select = $('#availableStudents');
+              $select.empty();
+              $.each(students, function (index, student) {
+                $select.append($('<option>', {
+                  value: student.id,
+                  text: student.firstName + ' ' + student.lastName
+                }));
+              });
+            },
+            error: function (xhr, status, error) {
+              console.error('Failed to update available students:', error);
+            }
+          });
+        }
+
+        // Add course assignment button click
+        $('#addAssignmentButton').click(function () {
+          var assignmentId = $('#availableAssignments').val();
+          var groupId = $('#groupId').val();
+
+          $.ajax({
+            url: '/groups/edit/' + groupId + '/addCourseAssignment',
+            type: 'POST',
+            data: {assignmentId: assignmentId},
+            beforeSend: function (xhr) {
+              xhr.setRequestHeader('X-CSRF-TOKEN', csrfToken);
+            },
+            success: function (response) {
+              location.reload();
+            },
+            error: function (xhr, status, error) {
+              alert('Failed to add course assignment: ' + xhr.responseText);
+            }
+          });
+        });
+
+        // Remove course assignment button click
+        $('.removeCourseAssignmentButton').click(function () {
+          var assignmentId = $(this).data('assignment-id');
+          var groupId = $('#groupId').val();
+
+          $.ajax({
+            url: '/groups/edit/' + groupId + '/remove-courseAssignment',
+            type: 'POST',
+            data: {assignmentId: assignmentId},
+            beforeSend: function (xhr) {
+              xhr.setRequestHeader('X-CSRF-TOKEN', csrfToken);
+            },
+            success: function (response) {
+              $('#courseAssignment-' + assignmentId).remove();
+              checkForDeleteButton();
+              updateAvailableCourseAssignments();
+              updateAvailableStudents();
+            },
+            error: function (xhr, status, error) {
+              alert('Failed to remove courseAssignment: ' + xhr.responseText);
+            }
+          });
+        });
+
+        // Add student button click
+        $('#addStudentButton').click(function () {
+          var studentId = $('#availableStudents').val();
+          var groupId = $('#groupId').val();
+
+          $.ajax({
+            url: '/groups/edit/' + groupId + '/addStudent',
+            type: 'POST',
+            data: {studentId: studentId},
+            beforeSend: function (xhr) {
+              xhr.setRequestHeader('X-CSRF-TOKEN', csrfToken);
+            },
+            success: function (response) {
+              location.reload();
+            },
+            error: function (xhr, status, error) {
+              alert('Failed to add student: ' + xhr.responseText);
+            }
+          });
+        });
+
+        // Remove student button click
+        $('.removeStudentButton').click(function () {
+          var studentId = $(this).data('student-id');
+          var groupId = $('#groupId').val();
+
+          $.ajax({
+            url: '/groups/edit/' + groupId + '/remove-student',
+            type: 'POST',
+            data: {studentId: studentId},
+            beforeSend: function (xhr) {
+              xhr.setRequestHeader('X-CSRF-TOKEN', csrfToken);
+            },
+            success: function (response) {
+              $('#student-' + studentId).remove();
+              checkForDeleteButton();
+              updateAvailableCourseAssignments();
+              updateAvailableStudents();
+            },
+            error: function (xhr, status, error) {
+              alert('Failed to remove student: ' + xhr.responseText);
+            }
+          });
+        });
+
+        // Change status button click
+        $('.changeStatusButton').click(function () {
+          var status = $(this).data('status');
+          var groupId = $('#groupId').val();
+
+          $.ajax({
+            url: '/groups/edit/' + groupId + '/change-status',
+            type: 'POST',
+            data: {status: status},
+            beforeSend: function (xhr) {
+              xhr.setRequestHeader('X-CSRF-TOKEN', csrfToken);
+            },
+            success: function (response) {
+              if (status === 'DELETED') {
+                window.location.href = '/groups';
+              } else {
+                location.reload();
+              }
+            },
+            error: function (xhr, status, error) {
+              alert('Failed to change status: ' + xhr.responseText);
+            }
+          });
+        });
+
+        // Delete button click
+        $('#deleteButton').click(function () {
+          var status = $(this).data('status');
+          var groupId = $('#groupId').val();
+
+          $.ajax({
+            url: '/groups/edit/' + groupId + '/change-status',
+            type: 'POST',
+            data: {status: status},
+            beforeSend: function (xhr) {
+              xhr.setRequestHeader('X-CSRF-TOKEN', csrfToken);
+            },
+            success: function (response) {
+              if (status === 'DELETED') {
+                window.location.href = '/groups';
+              } else {
+                location.reload();
+              }
+            },
+            error: function (xhr, status, error) {
+              alert('Failed to change status: ' + xhr.responseText);
+            }
+          });
+        });
+
+        // Check for delete button visibility
+        function checkForDeleteButton() {
+          var groupStatus = $('#groupStatus').text();
+
+          if (groupStatus === 'DELETING'
+              && $('#studentsTable tbody tr').length === 0
+              && $('#course-assignments-table tbody tr').length === 0) {
+            $('#deleteButton').show();
+          } else {
+            $('#deleteButton').hide();
+          }
+        }
+
+        // Initial check for the delete button and update available students
+        checkForDeleteButton();
+        updateAvailableCourseAssignments();
+        updateAvailableStudents();
+      });
+    </script>
+  </body>
+</html>

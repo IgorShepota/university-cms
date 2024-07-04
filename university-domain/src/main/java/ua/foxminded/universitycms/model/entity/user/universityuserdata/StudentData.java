@@ -8,6 +8,7 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import ua.foxminded.universitycms.model.entity.Group;
@@ -20,6 +21,7 @@ import ua.foxminded.universitycms.model.entity.Group;
 @AllArgsConstructor
 @SuperBuilder(setterPrefix = "with")
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class StudentData extends UniversityUserData {
 
   @ManyToOne

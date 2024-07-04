@@ -8,11 +8,20 @@ import ua.foxminded.universitycms.model.entity.CourseAssignment;
 @Mapper(componentModel = "spring")
 public interface CourseAssignmentMapper {
 
-  @Mapping(source = "group.id", target = "groupId")
-  @Mapping(source = "course.id", target = "courseId")
-  @Mapping(source = "teacherData.id", target = "teacherDataId")
+  @Mapping(target = "courseName", expression = "java(courseAssignment.getCourse() != null ? courseAssignment.getCourse().getName() : null)")
+  @Mapping(target = "groupName", expression = "java(courseAssignment.getGroup() != null ? courseAssignment.getGroup().getName() : null)")
+  @Mapping(target = "teacherFullName", expression = "java(getTeacherFullName(courseAssignment))")
   CourseAssignmentDTO courseAssignmentToCourseAssignmentDTO(CourseAssignment courseAssignment);
 
   CourseAssignment courseAssignmentDTOToCourseAssignment(CourseAssignmentDTO courseAssignmentDTO);
+
+  default String getTeacherFullName(CourseAssignment courseAssignment) {
+    if (courseAssignment.getTeacherData() == null
+        || courseAssignment.getTeacherData().getUser() == null) {
+      return null;
+    }
+    return courseAssignment.getTeacherData().getUser().getFirstName() + " " +
+        courseAssignment.getTeacherData().getUser().getLastName();
+  }
 
 }

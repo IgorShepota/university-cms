@@ -4,6 +4,7 @@ import java.util.Properties;
 import javax.sql.DataSource;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableJpaRepositories(basePackages = "ua.foxminded.universitycms.repository")
 @EnableTransactionManagement
 @EntityScan("ua.foxminded.universitycms.model")
+@ComponentScan("ua.foxminded.universitycms.repository")
 public class RepositoryConfig {
 
   @Bean

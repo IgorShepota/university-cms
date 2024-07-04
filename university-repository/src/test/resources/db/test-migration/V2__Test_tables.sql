@@ -6,8 +6,9 @@ CREATE TABLE classrooms
 
 CREATE TABLE groups
 (
-  id   VARCHAR(36) PRIMARY KEY,
-  name VARCHAR(255) NOT NULL UNIQUE CHECK (name ~ '^FLA-\d{3}$')
+  id     VARCHAR(36) PRIMARY KEY,
+  name   VARCHAR(255) NOT NULL UNIQUE CHECK (name ~ '^FLA-\d{3}$'),
+  status VARCHAR(10)  NOT NULL DEFAULT 'NEW' CHECK (status IN ('NEW', 'ACTIVE', 'DELETING', 'DELETED'))
 );
 
 CREATE TABLE courses
@@ -32,7 +33,7 @@ CREATE TABLE users
   password           VARCHAR(255)                        NOT NULL,
   first_name         VARCHAR(255)                        NOT NULL,
   last_name          VARCHAR(255)                        NOT NULL,
-  gender             VARCHAR(255)                        NOT NULL CHECK (gender IN ('Male', 'Female')),
+  gender             VARCHAR(255)                        NOT NULL CHECK (gender IN ('MALE', 'FEMALE')),
   role_id            VARCHAR(36)                         NOT NULL,
   creation_date_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
   FOREIGN KEY (role_id) REFERENCES roles (id)
@@ -77,7 +78,7 @@ CREATE TABLE teachers_courses
 CREATE TABLE course_assignments
 (
   id              VARCHAR(36) PRIMARY KEY,
-  group_id        VARCHAR(36) NOT NULL,
+  group_id        VARCHAR(36),
   course_id       VARCHAR(36),
   teacher_data_id VARCHAR(36),
   FOREIGN KEY (course_id) REFERENCES courses (id) ON DELETE RESTRICT,

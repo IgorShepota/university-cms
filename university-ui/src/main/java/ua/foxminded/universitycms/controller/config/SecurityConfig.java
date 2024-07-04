@@ -24,10 +24,11 @@ public class SecurityConfig {
     http.
         authorizeRequests(authz -> authz
             .antMatchers("/user/edit/**", "/courses/add/**", "/courses/activate/**",
-                "/courses/update/**", "/courses/deactivate/**", "/courses/delete/**")
+                "/courses/update/**", "/courses/deactivate/**", "/courses/delete/**",
+                "/groups/edit/**")
             .hasAuthority("ROLE_ADMIN")
             .antMatchers("/", "/user/login", "/user/registration", "/students", "/teachers",
-                "/courses")
+                "/courses", "/groups")
             .permitAll()
             .anyRequest().authenticated()
         )

@@ -9,7 +9,7 @@ import ua.foxminded.universitycms.dto.user.role.RoleDTO;
 import ua.foxminded.universitycms.model.entity.user.role.Role;
 import ua.foxminded.universitycms.model.entity.user.role.RoleName;
 
-class   RoleMapperTest {
+class RoleMapperTest {
 
   private final RoleMapper mapper = Mappers.getMapper(RoleMapper.class);
 

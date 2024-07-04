@@ -2,37 +2,42 @@ package ua.foxminded.universitycms.mapping;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ua.foxminded.universitycms.dto.CourseAssignmentDTO;
 import ua.foxminded.universitycms.model.entity.Course;
 import ua.foxminded.universitycms.model.entity.CourseAssignment;
 import ua.foxminded.universitycms.model.entity.Group;
+import ua.foxminded.universitycms.model.entity.user.User;
 import ua.foxminded.universitycms.model.entity.user.universityuserdata.TeacherData;
 
 class CourseAssignmentMapperTest {
 
   private final CourseAssignmentMapper mapper = new CourseAssignmentMapperImpl();
-  private String groupId;
-  private String courseId;
-  private String teacherId;
+  private String groupName;
+  private String courseName;
+  private String teacherFullName;
 
   @BeforeEach
   void setUp() {
-    groupId = UUID.randomUUID().toString();
-    courseId = UUID.randomUUID().toString();
-    teacherId = UUID.randomUUID().toString();
+    groupName = "FLA-101";
+    courseName = "Java Programming";
+    teacherFullName = "Michael Johnson";
   }
 
   @Test
   void courseAssignmentToCourseAssignmentDTOShouldWorkCorrectlyIfDataCorrect() {
+    User user = User.builder()
+        .firstName("Michael")
+        .lastName("Johnson")
+        .build();
+
     Group group = new Group();
-    group.setId(groupId);
+    group.setName(groupName);
     Course course = new Course();
-    course.setId(courseId);
+    course.setName(courseName);
     TeacherData teacherData = new TeacherData();
-    teacherData.setId(teacherId);
+    teacherData.setUser(user);
     CourseAssignment courseAssignment = CourseAssignment.builder()
         .withGroup(group)
         .withCourse(course)
@@ -42,17 +47,17 @@ class CourseAssignmentMapperTest {
     CourseAssignmentDTO courseAssignmentDTO = mapper.courseAssignmentToCourseAssignmentDTO(
         courseAssignment);
 
-    assertThat(courseAssignmentDTO.getGroupId()).isEqualTo(groupId);
-    assertThat(courseAssignmentDTO.getCourseId()).isEqualTo(courseId);
-    assertThat(courseAssignmentDTO.getTeacherDataId()).isEqualTo(teacherId);
+    assertThat(courseAssignmentDTO.getGroupName()).isEqualTo(groupName);
+    assertThat(courseAssignmentDTO.getCourseName()).isEqualTo(courseName);
+    assertThat(courseAssignmentDTO.getTeacherFullName()).isEqualTo(teacherFullName);
   }
 
   @Test
   void courseAssignmentDTOToCourseAssignmentShouldWorkCorrectlyIfDataCorrect() {
     CourseAssignmentDTO courseAssignmentDTO = CourseAssignmentDTO.builder()
-        .groupId(UUID.randomUUID().toString())
-        .courseId(UUID.randomUUID().toString())
-        .teacherDataId(UUID.randomUUID().toString())
+        .groupName("TestGroup")
+        .courseName("TestCourse")
+        .teacherFullName("Test Teacher")
         .build();
 
     CourseAssignment courseAssignment = mapper.courseAssignmentDTOToCourseAssignment(
@@ -82,9 +87,9 @@ class CourseAssignmentMapperTest {
     CourseAssignmentDTO courseAssignmentDTO = mapper.courseAssignmentToCourseAssignmentDTO(
         courseAssignment);
 
-    assertThat(courseAssignmentDTO.getGroupId()).isNull();
-    assertThat(courseAssignmentDTO.getCourseId()).isNull();
-    assertThat(courseAssignmentDTO.getTeacherDataId()).isNull();
+    assertThat(courseAssignmentDTO.getGroupName()).isNull();
+    assertThat(courseAssignmentDTO.getCourseName()).isNull();
+    assertThat(courseAssignmentDTO.getTeacherFullName()).isNull();
   }
 
   @Test
@@ -101,9 +106,9 @@ class CourseAssignmentMapperTest {
     CourseAssignmentDTO courseAssignmentDTO = mapper.courseAssignmentToCourseAssignmentDTO(
         courseAssignment);
 
-    assertThat(courseAssignmentDTO.getGroupId()).isEqualTo(group.getId());
-    assertThat(courseAssignmentDTO.getCourseId()).isEqualTo(course.getId());
-    assertThat(courseAssignmentDTO.getTeacherDataId()).isEqualTo(teacherData.getId());
+    assertThat(courseAssignmentDTO.getGroupName()).isEqualTo(group.getId());
+    assertThat(courseAssignmentDTO.getCourseName()).isEqualTo(course.getId());
+    assertThat(courseAssignmentDTO.getTeacherFullName()).isEqualTo(teacherData.getId());
   }
 
 }

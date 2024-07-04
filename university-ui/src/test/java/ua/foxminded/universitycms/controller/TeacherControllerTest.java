@@ -15,11 +15,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import ua.foxminded.universitycms.dto.user.UserDTO;
+import ua.foxminded.universitycms.dto.user.UserResponseDTO;
+import ua.foxminded.universitycms.model.entity.user.Gender;
 import ua.foxminded.universitycms.service.user.UserService;
 
 @WebMvcTest(TeacherController.class)
-public class TeacherControllerTest {
+class TeacherControllerTest {
 
   @Autowired
   private MockMvc mockMvc;
@@ -30,10 +31,10 @@ public class TeacherControllerTest {
   @Test
   @WithMockUser
   void listStudentsShouldReturnPageWithListedTeachers() throws Exception {
-    List<UserDTO> teachers = Arrays.asList(
-        new UserDTO("1", "teacher@example.com", "John", "Doe", "Male", "TEACHER",
+    List<UserResponseDTO> teachers = Arrays.asList(
+        new UserResponseDTO("1", "teacher@example.com", "John", "Doe", Gender.MALE, "TEACHER",
             LocalDateTime.now()),
-        new UserDTO("2", "teacher2@example.com", "Jane", "Doe", "Female", "TEACHER",
+        new UserResponseDTO("2", "teacher2@example.com", "Jane", "Doe", Gender.FEMALE, "TEACHER",
             LocalDateTime.now())
     );
 

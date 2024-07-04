@@ -32,6 +32,7 @@ import ua.foxminded.universitycms.model.entity.user.universityuserdata.TeacherDa
 import ua.foxminded.universitycms.repository.CourseAssignmentRepository;
 import ua.foxminded.universitycms.repository.CourseRepository;
 import ua.foxminded.universitycms.repository.user.universityuserdata.TeacherDataRepository;
+import ua.foxminded.universitycms.service.exception.CourseAlreadyExistsException;
 import ua.foxminded.universitycms.service.exception.InactiveCourseException;
 import ua.foxminded.universitycms.service.impl.CourseServiceImpl;
 
@@ -66,6 +67,38 @@ class CourseServiceImplTest {
 
     verify(courseMapper).courseDTOToCourse(courseDTO);
     verify(courseRepository).save(course);
+  }
+
+  @Test
+  void addCourseShouldThrowExceptionWhenNameExists() {
+    CourseDTO courseDTO = new CourseDTO();
+    courseDTO.setName("Existing Course");
+    courseDTO.setDescription("New Description");
+
+    when(courseRepository.existsByNameIgnoreCase(courseDTO.getName())).thenReturn(true);
+
+    assertThatThrownBy(() -> courseService.addCourse(courseDTO))
+        .isInstanceOf(CourseAlreadyExistsException.class)
+        .hasMessage("Course with name '" + courseDTO.getName() + "' already exists");
+
+    verify(courseRepository, never()).save(any(Course.class));
+  }
+
+  @Test
+  void addCourseShouldThrowExceptionWhenDescriptionExists() {
+    CourseDTO courseDTO = new CourseDTO();
+    courseDTO.setName("New Course");
+    courseDTO.setDescription("Existing Description");
+
+    when(courseRepository.existsByNameIgnoreCase(courseDTO.getName())).thenReturn(false);
+    when(courseRepository.existsByDescriptionIgnoreCase(courseDTO.getDescription())).thenReturn(
+        true);
+
+    assertThatThrownBy(() -> courseService.addCourse(courseDTO))
+        .isInstanceOf(CourseAlreadyExistsException.class)
+        .hasMessage("Course with description '" + courseDTO.getDescription() + "' already exists");
+
+    verify(courseRepository, never()).save(any(Course.class));
   }
 
   @Test
@@ -252,6 +285,21 @@ class CourseServiceImplTest {
     assertThat(course.getStatus()).isEqualTo(CourseStatus.ACTIVE);
     verify(courseRepository, times(1)).findById(courseId);
     verify(courseRepository, times(1)).save(course);
+  }
+
+  @Test
+  void activateCourseShouldStopExecutionIfStatusAlreadyActive() {
+    String courseId = "1";
+    Course course = new Course();
+    course.setId(courseId);
+    course.setStatus(CourseStatus.ACTIVE);
+
+    when(courseRepository.findById(courseId)).thenReturn(Optional.of(course));
+
+    courseService.activateCourse(courseId);
+
+    verify(courseRepository, never()).save(any(Course.class));
+    assertThat(course.getStatus()).isEqualTo(CourseStatus.ACTIVE);
   }
 
   @Test

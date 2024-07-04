@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import ua.foxminded.universitycms.model.entity.user.Gender;
 import ua.foxminded.universitycms.model.entity.user.User;
 import ua.foxminded.universitycms.model.entity.user.role.Role;
 import ua.foxminded.universitycms.model.entity.user.role.RoleName;
@@ -22,7 +23,7 @@ class UserDetailsImplTest {
         .password("securepassword")
         .firstName("John")
         .lastName("Doe")
-        .gender("Male")
+        .gender(Gender.MALE)
         .role(role)
         .build();
 

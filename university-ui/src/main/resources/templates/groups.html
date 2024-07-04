@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="UTF-8">
+    <title>Groups - University CMS</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+      .text-center {
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navbar -->
+    <div th:replace="fragments/navbar::navbar"></div>
+
+    <!-- Main container -->
+    <div class="container mt-5">
+
+      <h2>Groups</h2>
+      <!-- Add Course Form -->
+      <div sec:authorize="hasRole('ADMIN')" class="row align-items-end form-row">
+        <form th:action="@{/groups/add}" th:object="${group}" method="post" class="row g-3">
+          <div class="col-md-3">
+            <input type="text" class="form-control" th:field="*{name}" placeholder="Group Name"
+                   pattern="^FLA-\d{3}$" th:title="#{group.name.pattern}" required>
+            <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}"
+                  class="text-danger"></span>
+          </div>
+          <div class="col-md-3">
+            <button type="submit" class="btn btn-primary">Add Group</button>
+          </div>
+          <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+        </form>
+      </div>
+
+      <!-- Groups table -->
+      <table class="table mt-4">
+        <thead>
+        <tr>
+          <th scope="col">ID</th>
+          <th scope="col">Name</th>
+          <th scope="col" class="text-center">Course Assignments</th>
+          <th scope="col" class="text-center">Students</th>
+          <th scope="col">Status</th>
+          <th sec:authorize="hasRole('ADMIN')" scope="col">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="group : ${groups}" th:id="${'groupRow-' + group.id}">
+          <td th:text="${group.id}">ID</td>
+          <td th:text="${group.name}">Name</td>
+          <td class="text-center" th:text="${group.courseAssignments?.size() ?: 0}">Course
+            Assignments
+          </td>
+          <td class="text-center" th:text="${group.studentCount ?: 0}">Students</td>
+          <td>
+            <span th:id="${'groupStatus-' + group.id}" th:text="${group.status}">Status</span>
+          </td>
+          <td sec:authorize="hasRole('ADMIN')">
+            <a th:if="${group.status == T(ua.foxminded.universitycms.model.entity.GroupStatus).ACTIVE
+                || group.status == T(ua.foxminded.universitycms.model.entity.GroupStatus).DELETING
+                || group.status == T(ua.foxminded.universitycms.model.entity.GroupStatus).NEW}"
+               th:href="@{'/groups/edit/' + ${group.id}}"
+               class="btn btn-secondary btn-sm edit-btn">Edit
+            </a>
+            <button
+                th:if="${group.status == T(ua.foxminded.universitycms.model.entity.GroupStatus).DELETED}"
+                class="btn btn-primary btn-sm activate-btn" th:data-group-id="${group.id}"
+                th:data-status="ACTIVE">Activate
+            </button>
+            <button
+                th:if="${group.status == T(ua.foxminded.universitycms.model.entity.GroupStatus).DELETED}"
+                class="btn btn-danger btn-sm delete-btn" th:data-group-id="${group.id}">Delete
+            </button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- CSRF token -->
+    <input type="hidden" id="_csrf" th:value="${_csrf.token}"/>
+
+    <!-- JavaScript -->
+    <script>
+      $(document).ready(function () {
+        var csrfToken = $('#_csrf').val();
+
+        // Handler for Activate button
+        $('.activate-btn').click(function () {
+          var groupId = $(this).data('group-id');
+          var status = $(this).data('status');
+          var button = $(this);
+          $.ajax({
+            url: '/groups/edit/' + groupId + '/change-status',
+            type: 'POST',
+            data: {status: status},
+            beforeSend: function (xhr) {
+              xhr.setRequestHeader('X-CSRF-TOKEN', csrfToken);
+            },
+            success: function (response) {
+              console.log('Status changed successfully:', response);
+              $('#groupStatus-' + groupId).text(response);
+              updateButtonsVisibility(groupId, response);
+            },
+            error: function (xhr) {
+              console.error('Failed to change status:', xhr.responseText);
+              alert('Failed to change status: ' + xhr.responseText);
+            }
+          });
+        });
+
+        // Function to update button visibility
+        function updateButtonsVisibility(groupId, status) {
+          var row = $('#groupRow-' + groupId);
+          row.find('.activate-btn, .delete-btn, .edit-btn').remove();
+
+          if (status === 'ACTIVE' || status === 'DELETING' || status === 'NEW') {
+            row.find('td').last().append('<a href="/groups/edit/' + groupId
+                + '" class="btn btn-secondary btn-sm edit-btn">Edit</a>');
+          } else if (status === 'DELETED') {
+            row.find('td').last().append(
+                '<button class="btn btn-primary btn-sm activate-btn" data-group-id="' + groupId
+                + '" data-status="ACTIVE">Activate</button>');
+            row.find('td').last().append(
+                '<button class="btn btn-danger btn-sm delete-btn" data-group-id="' + groupId
+                + '">Delete</button>');
+          }
+        }
+
+        // Handler for Delete button
+        $('.delete-btn').click(function () {
+          var groupId = $(this).data('group-id');
+          $.ajax({
+            url: '/groups/delete/' + groupId,
+            type: 'DELETE',
+            beforeSend: function (xhr) {
+              xhr.setRequestHeader('X-CSRF-TOKEN', csrfToken);
+            },
+            success: function () {
+              $('#groupRow-' + groupId).remove();
+            },
+            error: function (xhr) {
+              console.error('Failed to delete group:', xhr.responseText);
+              alert('Failed to delete group: ' + xhr.responseText);
+            }
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

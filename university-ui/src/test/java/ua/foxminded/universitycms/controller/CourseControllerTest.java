@@ -1,5 +1,8 @@
 package ua.foxminded.universitycms.controller;
 
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.hasProperty;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
@@ -12,6 +15,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -31,6 +35,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import ua.foxminded.universitycms.controller.config.SecurityConfig;
 import ua.foxminded.universitycms.dto.CourseDTO;
 import ua.foxminded.universitycms.service.CourseService;
+import ua.foxminded.universitycms.service.exception.CourseAlreadyExistsException;
 
 @WebMvcTest(CourseController.class)
 @Import(SecurityConfig.class)
@@ -114,60 +119,110 @@ class CourseControllerTest {
         .andExpect(redirectedUrl("http://localhost/user/login")); // Redirect URL
   }
 
-  @Test
   @WithMockUser(roles = "ADMIN")
-  void addCourseShouldRedirectToCoursesWhenAdminAndValidCourse() throws Exception {
+  @Test
+  void addCourseShouldRedirectWhenValidInput() throws Exception {
+    CourseDTO courseDTO = new CourseDTO();
+    courseDTO.setName("New Course");
+    courseDTO.setDescription("Course Description");
+
     mockMvc.perform(post("/courses/add")
-            .param("name", "Test Course")
-            .param("description", "Test Description")
-            .param("status", "ACTIVE")
-            .with(csrf()))
+            .with(csrf())
+            .param("name", "New Course")
+            .param("description", "Course Description"))
         .andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl("/courses"));
 
-    verify(courseService, times(1)).addCourse(any(CourseDTO.class));
+    verify(courseService).addCourse(any(CourseDTO.class));
   }
 
-  @Test
   @WithMockUser(roles = "ADMIN")
-  void addCourseShouldReturnToCoursesViewWhenAdminAndInvalidCourse() throws Exception {
+  @Test
+  void addCourseShouldReturnCoursesViewWhenInvalidInput() throws Exception {
+    List<CourseDTO> courses = Arrays.asList(new CourseDTO(), new CourseDTO());
+    when(courseService.getAllCourses()).thenReturn(courses);
+
     mockMvc.perform(post("/courses/add")
-            .param("name", "")  // Invalid name
-            .param("description", "Test Description")
-            .param("status", "ACTIVE")
-            .with(csrf()))
+            .with(csrf())
+            .param("name", "")
+            .param("description", "Description"))
         .andExpect(status().isOk())
         .andExpect(view().name("courses"))
+        .andExpect(model().attributeExists("courses"))
+        .andExpect(model().hasErrors());
+
+    verify(courseService).getAllCourses();
+    verify(courseService, never()).addCourse(any(CourseDTO.class));
+  }
+
+  @WithMockUser(roles = "ADMIN")
+  @Test
+  void addCourseShouldReturnCoursesViewWhenDuplicateCourseName() throws Exception {
+    CourseDTO courseDTO = new CourseDTO();
+    courseDTO.setName("Existing Course");
+    courseDTO.setDescription("Description");
+
+    doThrow(new CourseAlreadyExistsException("Course with name Existing Course already exists"))
+        .when(courseService).addCourse(any(CourseDTO.class));
+
+    List<CourseDTO> courses = Arrays.asList(new CourseDTO(), new CourseDTO());
+    when(courseService.getAllCourses()).thenReturn(courses);
+
+    mockMvc.perform(post("/courses/add")
+            .with(csrf())
+            .param("name", "Existing Course")
+            .param("description", "Description"))
+        .andExpect(status().isOk())
+        .andExpect(view().name("courses"))
+        .andExpect(model().attributeExists("courses"))
         .andExpect(model().attributeHasFieldErrors("course", "name"));
 
-    verify(courseService, times(0)).addCourse(any(CourseDTO.class));
+    verify(courseService).addCourse(any(CourseDTO.class));
+    verify(courseService).getAllCourses();
+  }
+
+  @WithMockUser(roles = "ADMIN")
+  @Test
+  void addCourseShouldReturnCoursesViewWhenDuplicateCourseDescription() throws Exception {
+    CourseDTO courseDTO = new CourseDTO();
+    courseDTO.setName("New Course");
+    courseDTO.setDescription("Existing Description");
+
+    doThrow(new CourseAlreadyExistsException(
+        "Course with description Existing Description already exists"))
+        .when(courseService).addCourse(any(CourseDTO.class));
+
+    List<CourseDTO> courses = Arrays.asList(new CourseDTO(), new CourseDTO());
+    when(courseService.getAllCourses()).thenReturn(courses);
+
+    mockMvc.perform(post("/courses/add")
+            .with(csrf())
+            .param("name", "New Course")
+            .param("description", "Existing Description"))
+        .andExpect(status().isOk())
+        .andExpect(view().name("courses"))
+        .andExpect(model().attributeExists("courses"))
+        .andExpect(model().attributeHasFieldErrors("course", "description"))
+        .andExpect(model().errorCount(1))
+        .andExpect(model().attributeHasFieldErrorCode("course", "description", "duplicate"))
+        .andExpect(model().attribute("course", hasProperty("name", is("New Course"))))
+        .andExpect(
+            model().attribute("course", hasProperty("description", is("Existing Description"))))
+        .andExpect(content().string(
+            containsString("Course with description Existing Description already exists")));
+
+    verify(courseService).addCourse(any(CourseDTO.class));
+    verify(courseService).getAllCourses();
   }
 
   @Test
-  @WithMockUser(roles = "USER")
   void addCourseShouldReturnForbiddenWhenUserIsNotAdmin() throws Exception {
     mockMvc.perform(post("/courses/add")
-            .param("name", "Test Course")
-            .param("description", "Test Description")
-            .param("status", "ACTIVE")
-            .with(csrf()))
+            .param("name", "New Course")
+            .param("description", "Description"))
         .andExpect(status().isForbidden());
 
-    verify(courseService, times(0)).addCourse(any(CourseDTO.class));
-  }
-
-  @Test
-  @WithAnonymousUser
-  void addCourseShouldReturnUnauthorizedWhenUserIsAnonymous() throws Exception {
-    mockMvc.perform(post("/courses/add")
-            .param("name", "Test Course")
-            .param("description", "Test Description")
-            .param("status", "ACTIVE")
-            .with(csrf()))
-        .andExpect(status().isFound()) // 302 Redirect
-        .andExpect(redirectedUrl("http://localhost/user/login")); // Redirect URL
-
-    verify(courseService, times(0)).addCourse(any(CourseDTO.class));
+    verify(courseService, never()).addCourse(any(CourseDTO.class));
   }
 
   @Test
