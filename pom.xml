@@ -208,6 +208,7 @@
         </executions>
         <configuration>
           <excludes>
+            <exclude>**/ua/foxminded/universitycms/dto/**</exclude>
           </excludes>
           <rules>
             <rule>
@@ -216,7 +217,7 @@
                 <limit>
                   <counter>LINE</counter>
                   <value>COVEREDRATIO</value>
-                  <minimum>0</minimum>
+                  <minimum>0.95</minimum>
                 </limit>
               </limits>
             </rule>

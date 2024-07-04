@@ -1,14 +1,16 @@
 package ua.foxminded.universitycms.model.entity;
 
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -34,13 +36,16 @@ public class Group {
   private String id;
 
   @Column(name = "name", nullable = false, unique = true)
-  @Pattern(regexp = "^FLA-\\d{3}$", message = "Name must follow the 'FLA-XXX' pattern where XXX are digits")
   private String name;
 
-  @OneToMany(mappedBy = "ownerGroup", fetch = FetchType.LAZY)
-  private List<StudentData> students;
+  @Column(name = "status", nullable = false)
+  @Enumerated(EnumType.STRING)
+  private GroupStatus status = GroupStatus.NEW;
 
-  @OneToMany(mappedBy = "group", fetch = FetchType.LAZY)
-  private List<CourseAssignment> courseAssignments;
+  @OneToMany(mappedBy = "ownerGroup", fetch = FetchType.EAGER)
+  private Set<StudentData> students = new LinkedHashSet<>();
+
+  @OneToMany(mappedBy = "group", fetch = FetchType.EAGER)
+  private Set<CourseAssignment> courseAssignments = new LinkedHashSet<>();
 
 }

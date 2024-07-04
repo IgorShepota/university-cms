@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import ua.foxminded.universitycms.dto.CourseDTO;
 import ua.foxminded.universitycms.service.CourseService;
+import ua.foxminded.universitycms.service.exception.CourseAlreadyExistsException;
 
 @Controller
 @RequestMapping("/courses")
@@ -55,12 +56,25 @@ public class CourseController {
 
   @PreAuthorize("hasRole('ADMIN')")
   @PostMapping("/add")
-  public String addCourse(@Valid @ModelAttribute("course") CourseDTO course, BindingResult result) {
+  public String addCourse(@Valid @ModelAttribute("course") CourseDTO course, BindingResult result,
+      Model model) {
     if (result.hasErrors()) {
+      model.addAttribute("courses", courseService.getAllCourses());
       return "courses";
     }
 
-    courseService.addCourse(course);
+    try {
+      courseService.addCourse(course);
+    } catch (CourseAlreadyExistsException e) {
+      if (e.getMessage().contains("name")) {
+        result.rejectValue("name", "duplicate", e.getMessage());
+      }
+      if (e.getMessage().contains("description")) {
+        result.rejectValue("description", "duplicate", e.getMessage());
+      }
+      model.addAttribute("courses", courseService.getAllCourses());
+      return "courses";
+    }
 
     return "redirect:/courses";
   }

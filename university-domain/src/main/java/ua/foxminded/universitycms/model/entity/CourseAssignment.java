@@ -35,16 +35,16 @@ public class CourseAssignment {
   @GenericGenerator(name = "uuid", strategy = "uuid2")
   private String id;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "group_id", nullable = false)
+  @ManyToOne
+  @JoinColumn(name = "group_id")
   private Group group;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne
   @JoinColumn(name = "course_id")
   @OnDelete(action = OnDeleteAction.NO_ACTION)
   private Course course;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne
   @JoinColumn(name = "teacher_data_id")
   private TeacherData teacherData;
 

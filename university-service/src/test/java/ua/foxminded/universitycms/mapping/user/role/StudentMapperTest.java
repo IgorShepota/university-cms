@@ -3,8 +3,9 @@ package ua.foxminded.universitycms.mapping.user.role;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
-import ua.foxminded.universitycms.dto.user.role.StudentDTO;
+import ua.foxminded.universitycms.dto.user.role.StudentResponseDTO;
 import ua.foxminded.universitycms.model.entity.Group;
+import ua.foxminded.universitycms.model.entity.user.Gender;
 import ua.foxminded.universitycms.model.entity.user.User;
 import ua.foxminded.universitycms.model.entity.user.role.Role;
 import ua.foxminded.universitycms.model.entity.user.role.RoleName;
@@ -15,7 +16,7 @@ class StudentMapperTest {
   private final StudentMapper mapper = new StudentMapperImpl();
 
   @Test
-  void mapToStudentDTOShouldMapCorrectlyIfDataIsCorrect() {
+  void mapToStudentResponseDTOShouldMapCorrectlyIfDataIsCorrectResponse() {
     Role role = Role.builder()
         .withName(RoleName.STUDENT)
         .build();
@@ -25,7 +26,7 @@ class StudentMapperTest {
         .email("test@example.com")
         .firstName("John")
         .lastName("Doe")
-        .gender("Male")
+        .gender(Gender.MALE)
         .role(role)
         .build();
 
@@ -39,7 +40,7 @@ class StudentMapperTest {
         .withUser(user)
         .build();
 
-    StudentDTO studentDTO = mapper.mapToStudentDTO(user, studentData);
+    StudentResponseDTO studentDTO = mapper.mapToStudentResponseDTO(studentData);
 
     assertThat(studentDTO.getId()).isEqualTo(user.getId());
     assertThat(studentDTO.getEmail()).isEqualTo(user.getEmail());
@@ -51,37 +52,10 @@ class StudentMapperTest {
   }
 
   @Test
-  void mapToStudentDTOShouldReturnNullIfUserAndStudentDataAreNull() {
-    StudentDTO studentDTO = mapper.mapToStudentDTO(null, null);
+  void mapToStudentResponseDTOShouldReturnNullIfStudentResponseDataIsNull() {
+    StudentResponseDTO studentDTO = mapper.mapToStudentResponseDTO(null);
 
     assertThat(studentDTO).isNull();
-  }
-
-  @Test
-  void mapToStudentDTOShouldReturnNullIfUserIsNull() {
-    Group group = Group.builder()
-        .withId("1")
-        .withName("Group 1")
-        .build();
-
-    StudentData studentData = StudentData.builder()
-        .withOwnerGroup(group)
-        .build();
-
-    StudentDTO studentDTO = mapper.mapToStudentDTO(null, studentData);
-
-    assertThat(studentDTO).isNotNull();
-  }
-
-  @Test
-  void mapToStudentDTOShouldReturnNullIfStudentDataIsNull() {
-    User user = User.builder()
-        .id("1")
-        .build();
-
-    StudentDTO studentDTO = mapper.mapToStudentDTO(user, null);
-
-    assertThat(studentDTO).isNotNull();
   }
 
   @Test
@@ -101,7 +75,7 @@ class StudentMapperTest {
         .withUser(user)
         .build();
 
-    StudentDTO studentDTO = mapper.mapToStudentDTO(user, studentData);
+    StudentResponseDTO studentDTO = mapper.mapToStudentResponseDTO(studentData);
 
     assertThat(studentDTO.getRoleName()).isNull();
   }
@@ -117,7 +91,7 @@ class StudentMapperTest {
         .withUser(user)
         .build();
 
-    StudentDTO studentDTO = mapper.mapToStudentDTO(user, studentData);
+    StudentResponseDTO studentDTO = mapper.mapToStudentResponseDTO(studentData);
 
     assertThat(studentDTO.getRoleName()).isNull();
   }
@@ -135,7 +109,7 @@ class StudentMapperTest {
         .withOwnerGroup(group)
         .build();
 
-    StudentDTO studentDTO = mapper.mapToStudentDTO(user, studentData);
+    StudentResponseDTO studentDTO = mapper.mapToStudentResponseDTO(studentData);
 
     assertThat(studentDTO.getGroupName()).isNull();
   }
@@ -148,7 +122,7 @@ class StudentMapperTest {
         .withOwnerGroup(null)
         .build();
 
-    StudentDTO studentDTO = mapper.mapToStudentDTO(user, studentData);
+    StudentResponseDTO studentDTO = mapper.mapToStudentResponseDTO(studentData);
 
     assertThat(studentDTO.getGroupName()).isNull();
   }

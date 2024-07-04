@@ -4,8 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
-import ua.foxminded.universitycms.dto.user.UserDTO;
+import ua.foxminded.universitycms.dto.user.UserResponseDTO;
 import ua.foxminded.universitycms.dto.user.UserRegistrationDTO;
+import ua.foxminded.universitycms.model.entity.user.Gender;
 import ua.foxminded.universitycms.model.entity.user.User;
 import ua.foxminded.universitycms.model.entity.user.role.Role;
 import ua.foxminded.universitycms.model.entity.user.role.RoleName;
@@ -15,7 +16,7 @@ class UserMapperTest {
   private final UserMapperImpl mapper = new UserMapperImpl();
 
   @Test
-  void userToUserDTOShouldMapCorrectlyIfDataIsCorrect() {
+  void userToUserResponseDTOShouldMapCorrectlyIfDataIsCorrect() {
     Role role = Role.builder()
         .withName(RoleName.STUDENT)
         .build();
@@ -25,10 +26,10 @@ class UserMapperTest {
     user.setEmail("test@example.com");
     user.setFirstName("John");
     user.setLastName("Doe");
-    user.setGender("Male");
+    user.setGender(Gender.MALE);
     user.setRole(role);
 
-    UserDTO userDTO = mapper.userToUserDTO(user);
+    UserResponseDTO userDTO = mapper.userToUserResponseDTO(user);
 
     assertThat(userDTO.getId()).isEqualTo(user.getId());
     assertThat(userDTO.getEmail()).isEqualTo(user.getEmail());
@@ -49,7 +50,7 @@ class UserMapperTest {
         .role(role)
         .build();
 
-    UserDTO userDTO = mapper.userToUserDTO(user);
+    UserResponseDTO userDTO = mapper.userToUserResponseDTO(user);
 
     assertThat(userDTO.getRoleName()).isNull();
   }
@@ -58,7 +59,7 @@ class UserMapperTest {
   void userRoleNameShouldReturnNullIfRoleIsNull() {
     User user = new User();
 
-    UserDTO userDTO = mapper.userToUserDTO(user);
+    UserResponseDTO userDTO = mapper.userToUserResponseDTO(user);
 
     assertThat(userDTO.getRoleName()).isNull();
   }
@@ -70,7 +71,7 @@ class UserMapperTest {
         .password("password")
         .firstName("John")
         .lastName("Doe")
-        .gender("Male")
+        .gender(Gender.MALE)
         .build();
 
     User user = mapper.userRegistrationDTOToUser(userRegistrationDTO);
@@ -84,8 +85,8 @@ class UserMapperTest {
   }
 
   @Test
-  void userToUserDTOShouldReturnNullIfUserIsNull() {
-    UserDTO userDTO = mapper.userToUserDTO(null);
+  void userToUserDTOShouldReturnNullIfUserResponseIsNull() {
+    UserResponseDTO userDTO = mapper.userToUserResponseDTO(null);
 
     assertThat(userDTO).isNull();
   }

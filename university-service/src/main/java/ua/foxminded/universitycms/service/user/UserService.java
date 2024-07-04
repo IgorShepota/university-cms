@@ -1,23 +1,23 @@
 package ua.foxminded.universitycms.service.user;
 
 import java.util.List;
-import ua.foxminded.universitycms.dto.user.UserDTO;
+import ua.foxminded.universitycms.dto.user.UserResponseDTO;
 import ua.foxminded.universitycms.dto.user.UserRegistrationDTO;
-import ua.foxminded.universitycms.dto.user.role.StudentDTO;
+import ua.foxminded.universitycms.dto.user.role.StudentResponseDTO;
 
 public interface UserService {
 
   void registerUser(UserRegistrationDTO userRegistrationDTO);
 
-  List<UserDTO> getAllUsersSorted(String sort, String order);
+  List<UserResponseDTO> getAllUsersSorted(String sort, String order);
 
-  List<StudentDTO> getAllStudents();
+  List<StudentResponseDTO> getAllStudentsSorted(String sortField, String sortOrder);
 
-  List<UserDTO> getAllTeachers();
+  List<UserResponseDTO> getAllTeachers();
 
-  List<UserDTO> getAllUsers();
+  List<UserResponseDTO> getAllUsers();
 
-  List<UserDTO> getAllUsers(Integer page, Integer itemsPerPage);
+  List<UserResponseDTO> getAllUsers(Integer page, Integer itemsPerPage);
 
   void updateUserRole(String userId, String roleNName);
 

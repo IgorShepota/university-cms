@@ -32,28 +32,29 @@
     </style>
   </head>
   <body>
+    <!-- Navbar -->
     <div th:replace="fragments/navbar::navbar"></div>
 
+    <!-- Main container -->
     <div class="container mt-5">
       <h2>Courses</h2>
+
+      <!-- Add Course Form -->
       <div sec:authorize="hasRole('ADMIN')" class="row align-items-end form-row">
         <form th:action="@{/courses/add}" th:object="${course}" method="post" class="row g-3">
           <div class="col-md-3">
-            <input type="text" class="form-control" name="name" placeholder="Course Name"
-                   pattern="[A-Za-z0-9 ]{5,100}"
-                   th:title="#{course.name.title}" required>
+            <input type="text" class="form-control" th:field="*{name}" placeholder="Course Name"
+                   pattern="[A-Za-z0-9 ]{5,100}" th:title="#{course.name.title}" required>
             <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}"
                   class="text-danger"></span>
           </div>
           <div class="col-md-4">
-            <input type="text" class="form-control" name="description"
+            <input type="text" class="form-control" th:field="*{description}"
                    placeholder="Course Description"
-                   maxlength="100"
-                   th:title="#{course.description.title}" required>
+                   maxlength="100" th:title="#{course.description.title}" required>
             <span th:if="${#fields.hasErrors('description')}" th:errors="*{description}"
                   class="text-danger"></span>
           </div>
-
           <div class="col-md-3">
             <button type="submit" class="btn btn-primary">Add Course</button>
           </div>
@@ -61,6 +62,7 @@
         </form>
       </div>
 
+      <!-- Courses Table -->
       <table class="table mt-4">
         <thead>
         <tr>
@@ -85,20 +87,25 @@
           </td>
           <td th:text="${course.status}">Status</td>
           <td sec:authorize="hasRole('ADMIN')">
-            <button th:if="${course.status == T(ua.foxminded.universitycms.model.entity.CourseStatus).ACTIVE}"
-                    class="btn btn-warning btn-sm deactivate-btn">Deactivate
+            <button
+                th:if="${course.status == T(ua.foxminded.universitycms.model.entity.CourseStatus).ACTIVE}"
+                class="btn btn-warning btn-sm deactivate-btn">Deactivate
             </button>
-            <button th:if="${course.status == T(ua.foxminded.universitycms.model.entity.CourseStatus).INACTIVE}"
-                    class="btn btn-primary btn-sm activate-btn">Activate
+            <button
+                th:if="${course.status == T(ua.foxminded.universitycms.model.entity.CourseStatus).INACTIVE}"
+                class="btn btn-primary btn-sm activate-btn">Activate
             </button>
-            <button th:if="${course.status == T(ua.foxminded.universitycms.model.entity.CourseStatus).INACTIVE}"
-                    class="btn btn-danger btn-sm delete-btn">Delete
+            <button
+                th:if="${course.status == T(ua.foxminded.universitycms.model.entity.CourseStatus).INACTIVE}"
+                class="btn btn-danger btn-sm delete-btn">Delete
             </button>
-            <button th:if="${course.status == T(ua.foxminded.universitycms.model.entity.CourseStatus).ACTIVE}"
-                    class="btn btn-secondary btn-sm edit-btn">Edit
+            <button
+                th:if="${course.status == T(ua.foxminded.universitycms.model.entity.CourseStatus).ACTIVE}"
+                class="btn btn-secondary btn-sm edit-btn">Edit
             </button>
-            <button th:if="${course.status == T(ua.foxminded.universitycms.model.entity.CourseStatus).ACTIVE}"
-                    class="btn btn-primary btn-sm save-btn d-none">Save
+            <button
+                th:if="${course.status == T(ua.foxminded.universitycms.model.entity.CourseStatus).ACTIVE}"
+                class="btn btn-primary btn-sm save-btn d-none">Save
             </button>
           </td>
         </tr>
@@ -106,6 +113,7 @@
       </table>
     </div>
 
+    <!-- JavaScript Functions -->
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         // Handle deactivation
@@ -190,6 +198,7 @@
           });
         });
 
+        // Handle saving
         document.querySelectorAll('.save-btn').forEach(btn => {
           btn.addEventListener('click', function () {
             const tr = this.closest('tr');

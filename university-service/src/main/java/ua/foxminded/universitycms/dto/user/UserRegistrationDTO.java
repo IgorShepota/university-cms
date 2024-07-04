@@ -2,11 +2,13 @@ package ua.foxminded.universitycms.dto.user;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ua.foxminded.universitycms.model.entity.user.Gender;
 
 @Data
 @NoArgsConstructor
@@ -31,8 +33,7 @@ public class UserRegistrationDTO {
   @Pattern(regexp = "^[a-zA-Zа-яА-Я]+$", message = "{lastname.pattern}")
   private String lastName;
 
-  @NotBlank(message = "{gender.required}")
-  @Pattern(regexp = "^(Male|Female)$", message = "{gender.pattern}")
-  private String gender;
+  @NotNull(message = "{user.gender.required}")
+  private Gender gender;
 
 }

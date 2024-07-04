@@ -20,14 +20,17 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.system.CapturedOutput;
+import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
-import ua.foxminded.universitycms.dto.user.UserDTO;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import ua.foxminded.universitycms.dto.user.UserResponseDTO;
 import ua.foxminded.universitycms.dto.user.UserRegistrationDTO;
-import ua.foxminded.universitycms.dto.user.role.StudentDTO;
+import ua.foxminded.universitycms.dto.user.role.StudentResponseDTO;
 import ua.foxminded.universitycms.mapping.user.UserMapper;
 import ua.foxminded.universitycms.mapping.user.role.StudentMapper;
 import ua.foxminded.universitycms.model.entity.user.User;
@@ -42,9 +45,10 @@ import ua.foxminded.universitycms.repository.user.role.RoleRepository;
 import ua.foxminded.universitycms.repository.user.universityuserdata.StudentDataRepository;
 import ua.foxminded.universitycms.repository.user.universityuserdata.UniversityUserDataRepository;
 import ua.foxminded.universitycms.service.exception.InvalidRoleNameException;
+import ua.foxminded.universitycms.service.exception.UnsupportedRoleException;
 import ua.foxminded.universitycms.service.exception.UserNotFoundException;
 
-@ExtendWith(MockitoExtension.class)
+@ExtendWith({MockitoExtension.class, OutputCaptureExtension.class})
 class UserServiceImplTest {
 
   @Mock
@@ -68,19 +72,26 @@ class UserServiceImplTest {
   @InjectMocks
   private UserServiceImpl userService;
 
+  @Mock
+  private PasswordEncoder passwordEncoder;
+
   @Test
   void registerUserShouldSaveUserWithUnverifiedRole() {
     UserRegistrationDTO userRegistrationDTO = new UserRegistrationDTO();
+    userRegistrationDTO.setPassword("rawPassword");
     User user = new User();
+    user.setPassword("rawPassword");
     Role unverifiedRole = new Role(null, RoleName.UNVERIFIED, null);
 
     when(userMapper.userRegistrationDTOToUser(userRegistrationDTO)).thenReturn(user);
     when(roleRepository.findByName(RoleName.UNVERIFIED)).thenReturn(Optional.of(unverifiedRole));
+    when(passwordEncoder.encode("rawPassword")).thenReturn("encodedPassword");
 
     userService.registerUser(userRegistrationDTO);
 
     verify(userRepository).save(user);
     assertThat(user.getRole()).isEqualTo(unverifiedRole);
+    assertThat(user.getPassword()).isEqualTo("encodedPassword");
   }
 
   @Test
@@ -102,12 +113,12 @@ class UserServiceImplTest {
   void getUserByIdShouldReturnUserDTO() {
     String id = "user-id";
     User user = new User();
-    UserDTO userDTO = new UserDTO();
+    UserResponseDTO userDTO = new UserResponseDTO();
 
     when(userRepository.findById(id)).thenReturn(Optional.of(user));
-    when(userMapper.userToUserDTO(user)).thenReturn(userDTO);
+    when(userMapper.userToUserResponseDTO(user)).thenReturn(userDTO);
 
-    Optional<UserDTO> result = userService.getUserById(id);
+    Optional<UserResponseDTO> result = userService.getUserById(id);
 
     assertThat(result).isPresent().contains(userDTO);
   }
@@ -115,43 +126,133 @@ class UserServiceImplTest {
   @Test
   void getAllUsersShouldReturnListOfUserDTOs() {
     List<User> users = Arrays.asList(new User(), new User());
-    List<UserDTO> userDTOs = Arrays.asList(new UserDTO(), new UserDTO());
+    List<UserResponseDTO> userDTOs = Arrays.asList(new UserResponseDTO(), new UserResponseDTO());
 
     when(userRepository.findAll()).thenReturn(users);
-    when(userMapper.userToUserDTO(users.get(0))).thenReturn(userDTOs.get(0));
-    when(userMapper.userToUserDTO(users.get(1))).thenReturn(userDTOs.get(1));
+    when(userMapper.userToUserResponseDTO(users.get(0))).thenReturn(userDTOs.get(0));
+    when(userMapper.userToUserResponseDTO(users.get(1))).thenReturn(userDTOs.get(1));
 
-    List<UserDTO> result = userService.getAllUsers();
+    List<UserResponseDTO> result = userService.getAllUsers();
 
     assertThat(result).isEqualTo(userDTOs);
   }
 
   @Test
-  void getAllStudentsShouldReturnListOfStudentDTOs() {
-    User studentUser1 = User.builder().id("1").build();
-    User studentUser2 = User.builder().id("2").build();
-    List<User> studentUsers = Arrays.asList(studentUser1, studentUser2);
+  void getAllStudentsSortedShouldReturnSortedListAscending(CapturedOutput output) {
+    StudentData studentData1 = StudentData.builder()
+        .withId("1")
+        .withUser(User.builder()
+            .id("1")
+            .lastName("Doe")
+            .build())
+        .build();
+    StudentData studentData2 = StudentData.builder()
+        .withId("2")
+        .withUser(User.builder()
+            .id("2")
+            .lastName("Smith")
+            .build())
+        .build();
 
-    StudentData studentData1 = StudentData.builder().withId("1").build();
-    StudentData studentData2 = StudentData.builder().withId("2").build();
-    List<StudentData> studentDataList = Arrays.asList(studentData1, studentData2);
+    StudentResponseDTO studentDTO1 = new StudentResponseDTO();
+    studentDTO1.setId("1");
+    StudentResponseDTO studentDTO2 = new StudentResponseDTO();
+    studentDTO2.setId("2");
 
-    StudentDTO studentDTO1 = StudentDTO.builder().id("1").build();
-    StudentDTO studentDTO2 = StudentDTO.builder().id("2").build();
+    when(studentDataRepository.findAllWithSort("lastName", true))
+        .thenReturn(Arrays.asList(studentData1, studentData2));
+    when(studentMapper.mapToStudentResponseDTO(studentData1)).thenReturn(studentDTO1);
+    when(studentMapper.mapToStudentResponseDTO(studentData2)).thenReturn(studentDTO2);
 
-    when(userRepository.findAllByRoleName(RoleName.STUDENT)).thenReturn(studentUsers);
-    when(studentDataRepository.findAll()).thenReturn(studentDataList);
-    when(studentMapper.mapToStudentDTO(studentUser1, studentData1)).thenReturn(studentDTO1);
-    when(studentMapper.mapToStudentDTO(studentUser2, studentData2)).thenReturn(studentDTO2);
-
-    List<StudentDTO> result = userService.getAllStudents();
-
-    verify(userRepository).findAllByRoleName(RoleName.STUDENT);
-    verify(studentDataRepository).findAll();
-    verify(studentMapper).mapToStudentDTO(studentUser1, studentData1);
-    verify(studentMapper).mapToStudentDTO(studentUser2, studentData2);
+    List<StudentResponseDTO> result = userService.getAllStudentsSorted("lastName", "asc");
 
     assertThat(result).containsExactly(studentDTO1, studentDTO2);
+    assertThat(output.getOut()).contains("Fetching all students sorted by lastName asc");
+    verify(studentDataRepository).findAllWithSort("lastName", true);
+    verify(studentMapper, times(2)).mapToStudentResponseDTO(any(StudentData.class));
+  }
+
+  @Test
+  void getAllStudentsSortedShouldReturnSortedListDescending(CapturedOutput output) {
+    StudentData studentData1 = StudentData.builder()
+        .withId("1")
+        .withUser(User.builder()
+            .id("1")
+            .lastName("Doe")
+            .build())
+        .build();
+    StudentData studentData2 = StudentData.builder()
+        .withId("2")
+        .withUser(User.builder()
+            .id("2")
+            .lastName("Smith")
+            .build())
+        .build();
+
+    StudentResponseDTO studentDTO1 = new StudentResponseDTO();
+    studentDTO1.setId("1");
+    StudentResponseDTO studentDTO2 = new StudentResponseDTO();
+    studentDTO2.setId("2");
+
+    when(studentDataRepository.findAllWithSort("lastName", false))
+        .thenReturn(Arrays.asList(studentData2, studentData1));
+    when(studentMapper.mapToStudentResponseDTO(studentData1)).thenReturn(studentDTO1);
+    when(studentMapper.mapToStudentResponseDTO(studentData2)).thenReturn(studentDTO2);
+
+    List<StudentResponseDTO> result = userService.getAllStudentsSorted("lastName", "desc");
+
+    assertThat(result).containsExactly(studentDTO2, studentDTO1);
+    assertThat(output.getOut()).contains("Fetching all students sorted by lastName desc");
+    verify(studentDataRepository).findAllWithSort("lastName", false);
+    verify(studentMapper, times(2)).mapToStudentResponseDTO(any(StudentData.class));
+  }
+
+  @Test
+  void getAllStudentsSortedShouldHandleEmptyList(CapturedOutput output) {
+    when(studentDataRepository.findAllWithSort("lastName", true)).thenReturn(
+        Collections.emptyList());
+
+    List<StudentResponseDTO> result = userService.getAllStudentsSorted("lastName", "asc");
+
+    assertThat(result).isEmpty();
+    assertThat(output.getOut()).contains("Fetching all students sorted by lastName asc");
+    verify(studentDataRepository).findAllWithSort("lastName", true);
+    verify(studentMapper, never()).mapToStudentResponseDTO(any(StudentData.class));
+  }
+
+  @Test
+  void getAllStudentsSortedShouldHandleDifferentSortFields(CapturedOutput output) {
+    StudentData studentData1 = StudentData.builder()
+        .withId("1")
+        .withUser(User.builder()
+            .id("1")
+            .firstName("John")
+            .build())
+        .build();
+    StudentData studentData2 = StudentData.builder()
+        .withId("2")
+        .withUser(User.builder()
+            .id("2")
+            .firstName("Alice")
+            .build())
+        .build();
+
+    StudentResponseDTO studentDTO1 = new StudentResponseDTO();
+    studentDTO1.setId("1");
+    StudentResponseDTO studentDTO2 = new StudentResponseDTO();
+    studentDTO2.setId("2");
+
+    when(studentDataRepository.findAllWithSort("firstName", true))
+        .thenReturn(Arrays.asList(studentData2, studentData1));
+    when(studentMapper.mapToStudentResponseDTO(studentData1)).thenReturn(studentDTO1);
+    when(studentMapper.mapToStudentResponseDTO(studentData2)).thenReturn(studentDTO2);
+
+    List<StudentResponseDTO> result = userService.getAllStudentsSorted("firstName", "asc");
+
+    assertThat(result).containsExactly(studentDTO2, studentDTO1);
+    assertThat(output.getOut()).contains("Fetching all students sorted by firstName asc");
+    verify(studentDataRepository).findAllWithSort("firstName", true);
+    verify(studentMapper, times(2)).mapToStudentResponseDTO(any(StudentData.class));
   }
 
   @Test
@@ -162,21 +263,21 @@ class UserServiceImplTest {
     List<User> users = Arrays.asList(user1, user2);
 
     when(userRepository.findAll(Sort.by(Direction.ASC, sortField))).thenReturn(users);
-    when(userMapper.userToUserDTO(user1)).thenReturn(
-        UserDTO.builder().firstName("Alice").lastName("Wonderland").build());
-    when(userMapper.userToUserDTO(user2)).thenReturn(
-        UserDTO.builder().firstName("Bob").lastName("Builder").build());
+    when(userMapper.userToUserResponseDTO(user1)).thenReturn(
+        UserResponseDTO.builder().firstName("Alice").lastName("Wonderland").build());
+    when(userMapper.userToUserResponseDTO(user2)).thenReturn(
+        UserResponseDTO.builder().firstName("Bob").lastName("Builder").build());
 
-    List<UserDTO> sortedUsers = userService.getAllUsersSorted(sortField, "asc");
+    List<UserResponseDTO> sortedUsers = userService.getAllUsersSorted(sortField, "asc");
 
     assertThat(sortedUsers)
-        .extracting(UserDTO::getFirstName)
+        .extracting(UserResponseDTO::getFirstName)
         .as("Users should be sorted by firstName in ascending order")
         .containsExactly("Alice", "Bob");
 
     verify(userRepository).findAll(Sort.by(Direction.ASC, sortField));
-    verify(userMapper).userToUserDTO(user1);
-    verify(userMapper).userToUserDTO(user2);
+    verify(userMapper).userToUserResponseDTO(user1);
+    verify(userMapper).userToUserResponseDTO(user2);
   }
 
   @Test
@@ -187,21 +288,21 @@ class UserServiceImplTest {
     List<User> users = Arrays.asList(user1, user2);
 
     when(userRepository.findAll(Sort.by(Direction.DESC, sortField))).thenReturn(users);
-    when(userMapper.userToUserDTO(user1)).thenReturn(
-        UserDTO.builder().firstName("Bob").lastName("Builder").build());
-    when(userMapper.userToUserDTO(user2)).thenReturn(
-        UserDTO.builder().firstName("Alice").lastName("Wonderland").build());
+    when(userMapper.userToUserResponseDTO(user1)).thenReturn(
+        UserResponseDTO.builder().firstName("Bob").lastName("Builder").build());
+    when(userMapper.userToUserResponseDTO(user2)).thenReturn(
+        UserResponseDTO.builder().firstName("Alice").lastName("Wonderland").build());
 
-    List<UserDTO> sortedUsers = userService.getAllUsersSorted(sortField, "desc");
+    List<UserResponseDTO> sortedUsers = userService.getAllUsersSorted(sortField, "desc");
 
     assertThat(sortedUsers)
-        .extracting(UserDTO::getFirstName)
+        .extracting(UserResponseDTO::getFirstName)
         .as("Users should be sorted by firstName in descending order")
         .containsExactly("Bob", "Alice");
 
     verify(userRepository).findAll(Sort.by(Direction.DESC, sortField));
-    verify(userMapper).userToUserDTO(user1);
-    verify(userMapper).userToUserDTO(user2);
+    verify(userMapper).userToUserResponseDTO(user1);
+    verify(userMapper).userToUserResponseDTO(user2);
   }
 
   @Test
@@ -214,16 +315,16 @@ class UserServiceImplTest {
         .role(Role.builder().withName(RoleName.TEACHER).build())
         .build();
 
-    UserDTO teacherUserDTO1 = new UserDTO();
-    UserDTO teacherUserDTO2 = new UserDTO();
+    UserResponseDTO teacherUserDTO1 = new UserResponseDTO();
+    UserResponseDTO teacherUserDTO2 = new UserResponseDTO();
 
     List<User> teacherUsers = Arrays.asList(teacherUser1, teacherUser2);
 
     when(userRepository.findAllByRoleName(RoleName.TEACHER)).thenReturn(teacherUsers);
-    when(userMapper.userToUserDTO(teacherUser1)).thenReturn(teacherUserDTO1);
-    when(userMapper.userToUserDTO(teacherUser2)).thenReturn(teacherUserDTO2);
+    when(userMapper.userToUserResponseDTO(teacherUser1)).thenReturn(teacherUserDTO1);
+    when(userMapper.userToUserResponseDTO(teacherUser2)).thenReturn(teacherUserDTO2);
 
-    List<UserDTO> result = userService.getAllTeachers();
+    List<UserResponseDTO> result = userService.getAllTeachers();
 
     assertThat(result).containsExactly(teacherUserDTO1, teacherUserDTO2);
   }
@@ -234,17 +335,17 @@ class UserServiceImplTest {
     int itemsPerPage = 2;
     User user1 = new User();
     User user2 = new User();
-    UserDTO userDTO1 = new UserDTO();
-    UserDTO userDTO2 = new UserDTO();
+    UserResponseDTO userDTO1 = new UserResponseDTO();
+    UserResponseDTO userDTO2 = new UserResponseDTO();
 
     List<User> users = Arrays.asList(user1, user2);
     Page<User> userPage = new PageImpl<>(users);
 
     when(userRepository.findAll(any(Pageable.class))).thenReturn(userPage);
-    when(userMapper.userToUserDTO(user1)).thenReturn(userDTO1);
-    when(userMapper.userToUserDTO(user2)).thenReturn(userDTO2);
+    when(userMapper.userToUserResponseDTO(user1)).thenReturn(userDTO1);
+    when(userMapper.userToUserResponseDTO(user2)).thenReturn(userDTO2);
 
-    List<UserDTO> result = userService.getAllUsers(page, itemsPerPage);
+    List<UserResponseDTO> result = userService.getAllUsers(page, itemsPerPage);
 
     assertThat(result).containsExactly(userDTO1, userDTO2);
   }
@@ -275,7 +376,7 @@ class UserServiceImplTest {
   }
 
   @Test
-  public void updateUserRoleShouldThrowsExceptionIfUserIdIsInvalid() {
+  void updateUserRoleShouldThrowsExceptionIfUserIdIsInvalid() {
     String invalidUserId = "invalid-id";
     when(userRepository.findById(invalidUserId)).thenReturn(Optional.empty());
 
@@ -367,7 +468,7 @@ class UserServiceImplTest {
   }
 
   @Test
-  public void updateUserRoleShouldSetRoleToAdminIfDataCorrect() {
+  void updateUserRoleShouldSetRoleToAdminIfDataCorrect() {
     String userId = "user123";
     String newRoleName = "ADMIN";
     User user = new User();
@@ -393,7 +494,7 @@ class UserServiceImplTest {
   }
 
   @Test
-  public void updateUserRoleShouldSetRoleToTeacherIfDataCorrect() {
+  void updateUserRoleShouldSetRoleToTeacherIfDataCorrect() {
     String userId = "user123";
     String newRoleName = "TEACHER";
     User user = new User();
@@ -417,6 +518,32 @@ class UserServiceImplTest {
     assertThat(capturedUser.getRole().getName()).isEqualTo(RoleName.TEACHER);
 
     verify(universityUserDataRepository).save(any(TeacherData.class));
+  }
+
+  @Test
+  void updateUserRoleShouldThrowUnsupportedRoleExceptionForUnverifiedRole() {
+    String userId = "testUserId";
+    String unverifiedRoleName = "UNVERIFIED";
+    User user = new User();
+    user.setId(userId);
+    Role currentRole = new Role();
+    currentRole.setName(RoleName.UNVERIFIED);
+    user.setRole(currentRole);
+
+    Role newRole = new Role();
+    newRole.setName(RoleName.UNVERIFIED);
+
+    when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+    when(roleRepository.findByName(RoleName.UNVERIFIED)).thenReturn(Optional.of(newRole));
+
+    assertThatThrownBy(() -> userService.updateUserRole(userId, unverifiedRoleName))
+        .isInstanceOf(UnsupportedRoleException.class)
+        .hasMessageContaining("Unsupported role for user data creation");
+
+    verify(userRepository).findById(userId);
+    verify(roleRepository).findByName(RoleName.UNVERIFIED);
+    verify(universityUserDataRepository, never()).save(any());
+    verify(userRepository, never()).saveAndFlush(any());
   }
 
 }

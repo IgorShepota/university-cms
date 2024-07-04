@@ -13,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import ua.foxminded.universitycms.model.entity.user.Gender;
 import ua.foxminded.universitycms.model.entity.user.User;
 import ua.foxminded.universitycms.model.entity.user.role.Role;
 import ua.foxminded.universitycms.model.entity.user.role.RoleName;
@@ -39,7 +40,7 @@ public class UserDetailsServiceImplTest {
         .password("securepassword")
         .firstName("John")
         .lastName("Doe")
-        .gender("Male")
+        .gender(Gender.MALE)
         .role(role)
         .build();
 

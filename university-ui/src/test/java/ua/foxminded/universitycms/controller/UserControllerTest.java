@@ -25,13 +25,14 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import ua.foxminded.universitycms.dto.user.UserDTO;
+import ua.foxminded.universitycms.dto.user.UserResponseDTO;
 import ua.foxminded.universitycms.dto.user.UserRegistrationDTO;
+import ua.foxminded.universitycms.model.entity.user.Gender;
 import ua.foxminded.universitycms.service.user.UserService;
 
 @WebMvcTest(UserController.class)
 @WithMockUser
-public class UserControllerTest {
+class UserControllerTest {
 
   @Autowired
   private MockMvc mockMvc;
@@ -55,7 +56,7 @@ public class UserControllerTest {
             .param("password", "Password123!")
             .param("firstName", "John")
             .param("lastName", "Doe")
-            .param("gender", "Male"))
+            .param("gender", "MALE"))
         .andExpect(status().is3xxRedirection())
         .andExpect(redirectedUrl("/user/login"));
 
@@ -70,7 +71,7 @@ public class UserControllerTest {
             .param("password", "pass")
             .param("firstName", "1234")
             .param("lastName", "5678")
-            .param("gender", "Male"))
+            .param("gender", "MALE"))
         .andExpect(status().isOk())
         .andExpect(view().name("user/registration"));
 
@@ -86,9 +87,10 @@ public class UserControllerTest {
 
   @Test
   void listUsersShouldReturnAscendingSortIfWasDescending() throws Exception {
-    List<UserDTO> sampleUsers = Arrays.asList(
-        new UserDTO("1", "user1@example.com", "Bob", "Doe", "Male", "ADMIN", LocalDateTime.now()),
-        new UserDTO("2", "user2@example.com", "Jane", "Doe", "Female", "USER",
+    List<UserResponseDTO> sampleUsers = Arrays.asList(
+        new UserResponseDTO("1", "user1@example.com", "Bob", "Doe", Gender.MALE, "ADMIN",
+            LocalDateTime.now()),
+        new UserResponseDTO("2", "user2@example.com", "Jane", "Doe", Gender.FEMALE, "USER",
             LocalDateTime.now()));
 
     when(userService.getAllUsersSorted("creationDateTime", "asc")).thenReturn(sampleUsers);
@@ -108,9 +110,10 @@ public class UserControllerTest {
 
   @Test
   void listUsersShouldReturnDescendingSortIfWasAscending() throws Exception {
-    List<UserDTO> sampleUsers = Arrays.asList(
-        new UserDTO("1", "user1@example.com", "John", "Doe", "Male", "Admin", LocalDateTime.now()),
-        new UserDTO("2", "user2@example.com", "Jane", "Doe", "Female", "User",
+    List<UserResponseDTO> sampleUsers = Arrays.asList(
+        new UserResponseDTO("1", "user1@example.com", "John", "Doe", Gender.MALE, "Admin",
+            LocalDateTime.now()),
+        new UserResponseDTO("2", "user2@example.com", "Jane", "Doe", Gender.FEMALE, "User",
             LocalDateTime.now()));
 
     when(userService.getAllUsersSorted("lastName", "desc")).thenReturn(sampleUsers);

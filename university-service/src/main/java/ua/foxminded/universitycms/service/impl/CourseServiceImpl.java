@@ -18,8 +18,9 @@ import ua.foxminded.universitycms.repository.CourseAssignmentRepository;
 import ua.foxminded.universitycms.repository.CourseRepository;
 import ua.foxminded.universitycms.repository.user.universityuserdata.TeacherDataRepository;
 import ua.foxminded.universitycms.service.CourseService;
-import ua.foxminded.universitycms.service.exception.InactiveCourseException;
+import ua.foxminded.universitycms.service.exception.CourseAlreadyExistsException;
 import ua.foxminded.universitycms.service.exception.CourseNotFoundException;
+import ua.foxminded.universitycms.service.exception.InactiveCourseException;
 
 @Service
 @RequiredArgsConstructor
@@ -34,6 +35,15 @@ public class CourseServiceImpl implements CourseService {
   @Override
   @Transactional
   public void addCourse(CourseDTO courseDTO) {
+    if (courseRepository.existsByNameIgnoreCase(courseDTO.getName())) {
+      throw new CourseAlreadyExistsException(
+          "Course with name '" + courseDTO.getName() + "' already exists");
+    }
+    if (courseRepository.existsByDescriptionIgnoreCase(courseDTO.getDescription())) {
+      throw new CourseAlreadyExistsException(
+          "Course with description '" + courseDTO.getDescription() + "' already exists");
+    }
+
     Course course = courseMapper.courseDTOToCourse(courseDTO);
     course = courseRepository.save(course);
     log.info("Course with id {} was successfully saved.", course.getId());

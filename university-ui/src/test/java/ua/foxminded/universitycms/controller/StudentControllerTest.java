@@ -12,7 +12,8 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import ua.foxminded.universitycms.dto.user.role.StudentDTO;
+import ua.foxminded.universitycms.dto.user.role.StudentResponseDTO;
+import ua.foxminded.universitycms.model.entity.user.Gender;
 import ua.foxminded.universitycms.service.user.UserService;
 
 @WebMvcTest(StudentController.class)
@@ -27,30 +28,33 @@ class StudentControllerTest {
   @Test
   @WithMockUser
   void listStudentsShouldReturnPageWithListedStudents() throws Exception {
-    List<StudentDTO> students = Arrays.asList(
-        StudentDTO.builder()
+    String sort = "id";
+    String order = "asc";
+
+    List<StudentResponseDTO> students = Arrays.asList(
+        StudentResponseDTO.builder()
             .id("1")
             .email("john.doe@example.com")
             .firstName("John")
             .lastName("Doe")
-            .gender("Male")
+            .gender(Gender.MALE)
             .roleName("Student")
             .groupName("Computer Science")
             .creationDateTime(LocalDateTime.now())
             .build(),
-        StudentDTO.builder()
+        StudentResponseDTO.builder()
             .id("2")
             .email("jane.smith@example.com")
             .firstName("Jane")
             .lastName("Smith")
-            .gender("Female")
+            .gender(Gender.FEMALE)
             .roleName("Student")
             .groupName("Mathematics")
             .creationDateTime(LocalDateTime.now())
             .build()
     );
 
-    Mockito.when(userService.getAllStudents()).thenReturn(students);
+    Mockito.when(userService.getAllStudentsSorted(sort, order)).thenReturn(students);
 
     mockMvc.perform(MockMvcRequestBuilders.get("/students"))
         .andExpect(MockMvcResultMatchers.status().isOk())

@@ -10,7 +10,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -31,15 +30,12 @@ public class Lesson {
   private String id;
 
   @Column(name = "date", nullable = false)
-  @NotNull(message = "Date cannot be null")
   private LocalDate date;
 
   @Column(name = "start_time", nullable = false)
-  @NotNull(message = "Start time cannot be null")
   private LocalTime startTime;
 
   @Column(name = "end_time", nullable = false)
-  @NotNull(message = "End time cannot be null")
   private LocalTime endTime;
 
   @ManyToOne(fetch = FetchType.LAZY)

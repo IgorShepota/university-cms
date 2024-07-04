@@ -8,7 +8,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -33,7 +32,6 @@ public class ClassRoom {
   private String id;
 
   @Column(name = "name", nullable = false, unique = true)
-  @Pattern(regexp = "^\\d{3}$", message = "Name must consist of exactly 3 digits")
   private String name;
 
   @OneToMany(mappedBy = "classroom", fetch = FetchType.LAZY)

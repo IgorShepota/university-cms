@@ -16,8 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import ua.foxminded.universitycms.dto.user.ChangeRoleRequest;
-import ua.foxminded.universitycms.dto.user.UserDTO;
+import ua.foxminded.universitycms.dto.user.UserResponseDTO;
 import ua.foxminded.universitycms.dto.user.UserRegistrationDTO;
+import ua.foxminded.universitycms.model.entity.user.Gender;
 import ua.foxminded.universitycms.service.user.UserService;
 
 @Controller
@@ -34,8 +35,9 @@ public class UserController {
   }
 
   @GetMapping("/registration")
-  public String showRegistrationForm(@ModelAttribute("user") UserRegistrationDTO user) {
-
+  public String showRegistrationForm(Model model) {
+    model.addAttribute("user", new UserRegistrationDTO());
+    model.addAttribute("genderValues", Gender.values());
     return "user/registration";
   }
 
@@ -55,7 +57,7 @@ public class UserController {
   public String listUsers(Model model,
       @RequestParam(required = false, defaultValue = "creationDateTime") String sort,
       @RequestParam(required = false, defaultValue = "asc") String order) {
-    List<UserDTO> users = userService.getAllUsersSorted(sort, order);
+    List<UserResponseDTO> users = userService.getAllUsersSorted(sort, order);
 
     model.addAttribute("users", users);
     model.addAttribute("sortField", sort);
