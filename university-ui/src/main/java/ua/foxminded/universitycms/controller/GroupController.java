@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import ua.foxminded.universitycms.dto.CourseAssignmentDTO;
 import ua.foxminded.universitycms.dto.GroupDTO;
 import ua.foxminded.universitycms.dto.user.role.StudentResponseDTO;
 import ua.foxminded.universitycms.model.entity.GroupStatus;
@@ -51,7 +50,7 @@ public class GroupController {
     try {
       GroupDTO groupEditDetails = groupService.getGroupEditDetails(id);
       model.addAttribute("group", groupEditDetails);
-      model.addAttribute("availableAssignments", groupEditDetails.getAvailableCourseAssignments());
+//      model.addAttribute("availableAssignments", groupEditDetails.getAvailableCourseAssignments());
       model.addAttribute("availableStudents", groupEditDetails.getAvailableStudents());
       return "group-edit";
     } catch (EntityNotFoundException e) {
@@ -84,22 +83,6 @@ public class GroupController {
     }
 
     return "redirect:/groups";
-  }
-
-  @PreAuthorize("hasRole('ADMIN')")
-  @GetMapping("/edit/available-courseAssignments")
-  @ResponseBody
-  public List<CourseAssignmentDTO> getAvailableCourseAssignments() {
-    return groupService.getCourseAssignmentWithNoGroup();
-  }
-
-  @PreAuthorize("hasRole('ADMIN')")
-  @PostMapping("/edit/{groupId}/addCourseAssignment")
-  @ResponseBody
-  public ResponseEntity<Void> addCourseAssignmentToGroup(@PathVariable String groupId,
-      @RequestParam String assignmentId) {
-    groupService.addCourseAssignmentToGroup(groupId, assignmentId);
-    return ResponseEntity.ok().build();
   }
 
   @PreAuthorize("hasRole('ADMIN')")

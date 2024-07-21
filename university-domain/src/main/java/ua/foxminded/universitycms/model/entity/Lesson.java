@@ -43,7 +43,7 @@ public class Lesson {
   private ClassRoom classroom;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "course_assignment_id", nullable = false)
+  @JoinColumn(name = "course_assignment_id")
   private CourseAssignment courseAssignment;
 
 }

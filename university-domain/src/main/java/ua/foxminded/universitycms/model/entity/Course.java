@@ -1,6 +1,7 @@
 package ua.foxminded.universitycms.model.entity;
 
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -45,10 +46,10 @@ public class Course {
   @Enumerated(EnumType.STRING)
   private CourseStatus status = CourseStatus.ACTIVE;
 
-  @ManyToMany(mappedBy = "courses", fetch = FetchType.LAZY)
-  private List<TeacherData> teachers;
+  @ManyToMany(mappedBy = "courses", fetch = FetchType.EAGER)
+  private Set<TeacherData> teachers = new LinkedHashSet<>();
 
-  @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
-  private List<CourseAssignment> courseAssignments;
+  @OneToMany(mappedBy = "course", fetch = FetchType.EAGER)
+  private Set<CourseAssignment> courseAssignments = new LinkedHashSet<>();
 
 }

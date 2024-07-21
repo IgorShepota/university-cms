@@ -1,6 +1,8 @@
 package ua.foxminded.universitycms.model.entity.user.universityuserdata;
 
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -33,7 +35,7 @@ public class TeacherData extends UniversityUserData {
   @ManyToMany
   @JoinTable(name = "teachers_courses", joinColumns = @JoinColumn(name = "teacher_data_id"),
       inverseJoinColumns = @JoinColumn(name = "course_id"))
-  private List<Course> courses;
+  private Set<Course> courses = new LinkedHashSet<>();
 
   @OneToMany(mappedBy = "teacherData")
   private List<CourseAssignment> courseAssignments;

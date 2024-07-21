@@ -511,9 +511,11 @@ class GroupControllerTest {
   void getAvailableStudentsShouldReturnListOfStudentsWhenThereAreAvailableStudents()
       throws Exception {
     List<StudentResponseDTO> students = Arrays.asList(
-        StudentResponseDTO.builder().id("1").firstName("John").lastName("Doe").email("john@example.com")
+        StudentResponseDTO.builder().id("1").firstName("John").lastName("Doe")
+            .email("john@example.com")
             .build(),
-        StudentResponseDTO.builder().id("2").firstName("Jane").lastName("Doe").email("jane@example.com")
+        StudentResponseDTO.builder().id("2").firstName("Jane").lastName("Doe")
+            .email("jane@example.com")
             .build());
     when(groupService.getStudentWithNoGroup()).thenReturn(students);
 

@@ -25,6 +25,8 @@ public class CourseDTO {
   @Size(min = 10, max = 1000, message = "{description.size}")
   private String description;
 
+  private int teacherCount;
+
   @NotNull(message = "{course.status.required}")
   private CourseStatus status = CourseStatus.ACTIVE;
 

@@ -14,40 +14,137 @@
     <!-- Main container -->
     <div class="container mt-5">
       <h2>Students</h2>
+
+      <!-- Search form -->
+      <form th:action="@{/students}" method="get" class="mb-4">
+        <div class="row g-3">
+          <div class="col-md-2">
+            <input type="text" class="form-control" name="id" th:value="${param.id}"
+                   placeholder="ID">
+          </div>
+          <div class="col-md-2">
+            <input type="text" class="form-control" name="firstName" th:value="${param.firstName}"
+                   placeholder="First Name">
+          </div>
+          <div class="col-md-2">
+            <input type="text" class="form-control" name="lastName" th:value="${param.lastName}"
+                   placeholder="Last Name">
+          </div>
+          <div class="col-md-2">
+            <input type="text" class="form-control" name="email" th:value="${param.email}"
+                   placeholder="Email">
+          </div>
+          <div class="col-md-2">
+            <select class="form-select" name="gender">
+              <option value="">Select Gender</option>
+              <option
+                  th:each="genderOption : ${T(ua.foxminded.universitycms.model.entity.user.Gender).values()}"
+                  th:value="${genderOption}"
+                  th:text="${genderOption.displayName}"
+                  th:selected="${param.gender == genderOption.name()}">
+              </option>
+            </select>
+          </div>
+          <div class="col-md-2">
+            <input type="text" class="form-control" name="groupName" th:value="${param.groupName}"
+                   placeholder="Group Name">
+          </div>
+          <div class="col-md-2">
+            <button type="submit" class="btn btn-primary">Search</button>
+            <a href="/students" class="btn btn-secondary">Clear</a>
+          </div>
+        </div>
+        <input type="hidden" name="sort" th:value="${sortField}">
+        <input type="hidden" name="order" th:value="${sortOrder}">
+      </form>
+
+      <!--Students table-->
       <table class="table">
         <thead>
         <tr>
           <th scope="col">
-            <a
-                th:href="${sortField == 'id' && sortOrder == 'asc' ? '?sort=id&order=desc' : '?sort=id&order=asc'}">ID</a>
+            <a th:href="@{/students(
+                        id=${searchCriteria.id},
+                        firstName=${searchCriteria.firstName},
+                        lastName=${searchCriteria.lastName},
+                        email=${searchCriteria.email},
+                        gender=${searchCriteria.gender},
+                        groupName=${searchCriteria.groupName},
+                        sort='id',
+                        order=${sortField == 'id' && sortOrder == 'asc' ? 'desc' : 'asc'}
+                    )}">ID</a>
           </th>
           <th scope="col">
-            <a
-                th:href="${sortField == 'firstName' && sortOrder == 'asc' ? '?sort=firstName&order=desc' : '?sort=firstName&order=asc'}">First
-              Name</a>
+            <a th:href="@{/students(
+                        id=${searchCriteria.id},
+                        firstName=${searchCriteria.firstName},
+                        lastName=${searchCriteria.lastName},
+                        email=${searchCriteria.email},
+                        gender=${searchCriteria.gender},
+                        groupName=${searchCriteria.groupName},
+                        sort='firstName',
+                        order=${sortField == 'firstName' && sortOrder == 'asc' ? 'desc' : 'asc'}
+                    )}">First Name</a>
           </th>
           <th scope="col">
-            <a
-                th:href="${sortField == 'lastName' && sortOrder == 'asc' ? '?sort=lastName&order=desc' : '?sort=lastName&order=asc'}">Last
-              Name</a>
+            <a th:href="@{/students(
+                        id=${searchCriteria.id},
+                        firstName=${searchCriteria.firstName},
+                        lastName=${searchCriteria.lastName},
+                        email=${searchCriteria.email},
+                        gender=${searchCriteria.gender},
+                        groupName=${searchCriteria.groupName},
+                        sort='lastName',
+                        order=${sortField == 'lastName' && sortOrder == 'asc' ? 'desc' : 'asc'}
+                    )}">Last Name</a>
           </th>
           <th scope="col">
-            <a
-                th:href="${sortField == 'email' && sortOrder == 'asc' ? '?sort=email&order=desc' : '?sort=email&order=asc'}">Email</a>
+            <a th:href="@{/students(
+                        id=${searchCriteria.id},
+                        firstName=${searchCriteria.firstName},
+                        lastName=${searchCriteria.lastName},
+                        email=${searchCriteria.email},
+                        gender=${searchCriteria.gender},
+                        groupName=${searchCriteria.groupName},
+                        sort='email',
+                        order=${sortField == 'email' && sortOrder == 'asc' ? 'desc' : 'asc'}
+                    )}">Email</a>
           </th>
           <th scope="col">
-            <a
-                th:href="${sortField == 'gender' && sortOrder == 'asc' ? '?sort=gender&order=desc' : '?sort=gender&order=asc'}">Gender</a>
+            <a th:href="@{/students(
+                        id=${searchCriteria.id},
+                        firstName=${searchCriteria.firstName},
+                        lastName=${searchCriteria.lastName},
+                        email=${searchCriteria.email},
+                        gender=${searchCriteria.gender},
+                        groupName=${searchCriteria.groupName},
+                        sort='gender',
+                        order=${sortField == 'gender' && sortOrder == 'asc' ? 'desc' : 'asc'}
+                    )}">Gender</a>
           </th>
           <th scope="col">
-            <a
-                th:href="${sortField == 'groupName' && sortOrder == 'asc' ? '?sort=groupName&order=desc' : '?sort=groupName&order=asc'}">Group
-              Name</a>
+            <a th:href="@{/students(
+                        id=${searchCriteria.id},
+                        firstName=${searchCriteria.firstName},
+                        lastName=${searchCriteria.lastName},
+                        email=${searchCriteria.email},
+                        gender=${searchCriteria.gender},
+                        groupName=${searchCriteria.groupName},
+                        sort='groupName',
+                        order=${sortField == 'groupName' && sortOrder == 'asc' ? 'desc' : 'asc'}
+                    )}">Group Name</a>
           </th>
           <th scope="col">
-            <a
-                th:href="${sortField == 'creationDateTime' && sortOrder == 'asc' ? '?sort=creationDateTime&order=desc' : '?sort=creationDateTime&order=asc'}">Creation
-              Time</a>
+            <a th:href="@{/students(
+                        id=${searchCriteria.id},
+                        firstName=${searchCriteria.firstName},
+                        lastName=${searchCriteria.lastName},
+                        email=${searchCriteria.email},
+                        gender=${searchCriteria.gender},
+                        groupName=${searchCriteria.groupName},
+                        sort='creationDateTime',
+                        order=${sortField == 'creationDateTime' && sortOrder == 'asc' ? 'desc' : 'asc'}
+                    )}">Creation Time</a>
           </th>
         </tr>
         </thead>

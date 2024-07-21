@@ -82,12 +82,15 @@ public class CourseController {
   @PreAuthorize("hasRole('ADMIN')")
   @PostMapping("/update")
   @ResponseBody
-  public ResponseEntity<Void> updateCourse(@RequestBody CourseDTO courseDTO) {
+  public ResponseEntity<String> updateCourse(@RequestBody CourseDTO courseDTO) {
     try {
       courseService.updateCourse(courseDTO);
       return ResponseEntity.ok().build();
+    } catch (CourseAlreadyExistsException e) {
+      return ResponseEntity.badRequest().body(e.getMessage());
     } catch (Exception e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .body("An unexpected error occurred");
     }
   }
 

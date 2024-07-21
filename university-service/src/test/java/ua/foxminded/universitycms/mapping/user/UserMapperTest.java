@@ -4,8 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
-import ua.foxminded.universitycms.dto.user.UserResponseDTO;
 import ua.foxminded.universitycms.dto.user.UserRegistrationDTO;
+import ua.foxminded.universitycms.dto.user.UserResponseDTO;
 import ua.foxminded.universitycms.model.entity.user.Gender;
 import ua.foxminded.universitycms.model.entity.user.User;
 import ua.foxminded.universitycms.model.entity.user.role.Role;

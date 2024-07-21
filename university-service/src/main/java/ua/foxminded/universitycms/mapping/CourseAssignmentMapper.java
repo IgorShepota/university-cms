@@ -1,11 +1,12 @@
 package ua.foxminded.universitycms.mapping;
 
+import org.mapstruct.Builder;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import ua.foxminded.universitycms.dto.CourseAssignmentDTO;
 import ua.foxminded.universitycms.model.entity.CourseAssignment;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", builder = @Builder(disableBuilder = true))
 public interface CourseAssignmentMapper {
 
   @Mapping(target = "courseName", expression = "java(courseAssignment.getCourse() != null ? courseAssignment.getCourse().getName() : null)")
@@ -13,6 +14,7 @@ public interface CourseAssignmentMapper {
   @Mapping(target = "teacherFullName", expression = "java(getTeacherFullName(courseAssignment))")
   CourseAssignmentDTO courseAssignmentToCourseAssignmentDTO(CourseAssignment courseAssignment);
 
+  @Mapping(target = "lessons", ignore = true)
   CourseAssignment courseAssignmentDTOToCourseAssignment(CourseAssignmentDTO courseAssignmentDTO);
 
   default String getTeacherFullName(CourseAssignment courseAssignment) {

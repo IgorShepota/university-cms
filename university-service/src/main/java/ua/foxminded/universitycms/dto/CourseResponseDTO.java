@@ -2,36 +2,35 @@ package ua.foxminded.universitycms.dto;
 
 import java.util.List;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ua.foxminded.universitycms.dto.user.role.TeacherResponseDTO;
+import ua.foxminded.universitycms.model.entity.CourseStatus;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CourseAssignmentDTO {
+public class CourseResponseDTO {
 
   private String id;
-  private String courseId;
-  private String teacherId;
-  private String groupId;
-
-  @Pattern(regexp = "^FLA-\\d{3}$", message = "{group.name.pattern}")
-  private String groupName;
 
   @NotBlank(message = "{course.name.required}")
   @Size(min = 5, max = 100, message = "{course.name.size}")
-  private String courseName;
+  private String name;
 
-  @NotBlank(message = "{teacher.fullName.required}")
-  @Size(min = 2, max = 100, message = "{teacher.fullName.size}")
-  private String teacherFullName;
+  @NotBlank(message = "{course.description.required}")
+  @Size(min = 10, max = 1000, message = "{description.size}")
+  private String description;
 
+  @NotNull(message = "{course.status.required}")
+  private CourseStatus status = CourseStatus.ACTIVE;
+
+  private List<TeacherResponseDTO> teachers;
   private List<TeacherResponseDTO> availableTeachers;
 
 }

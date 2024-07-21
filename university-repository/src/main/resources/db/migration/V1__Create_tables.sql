@@ -84,10 +84,10 @@ CREATE TABLE course_assignments
   group_id        VARCHAR(36),
   course_id       VARCHAR(36),
   teacher_data_id VARCHAR(36),
-  FOREIGN KEY (course_id) REFERENCES courses (id) ON DELETE RESTRICT,
+  FOREIGN KEY (course_id) REFERENCES courses (id) ON DELETE SET NULL,
   FOREIGN KEY (group_id) REFERENCES groups (id),
   FOREIGN KEY (teacher_data_id) REFERENCES teacher_data (id) ON DELETE SET NULL,
-  UNIQUE (group_id, course_id, teacher_data_id)
+  UNIQUE (course_id, teacher_data_id, group_id)
 );
 
 CREATE TABLE lessons
@@ -97,8 +97,8 @@ CREATE TABLE lessons
   start_time           TIME        NOT NULL CHECK (start_time < end_time),
   end_time             TIME        NOT NULL,
   classroom_id         VARCHAR(36) NOT NULL,
-  course_assignment_id VARCHAR(36) NOT NULL,
+  course_assignment_id VARCHAR(36),
   FOREIGN KEY (classroom_id) REFERENCES classrooms (id),
-  FOREIGN KEY (course_assignment_id) REFERENCES course_assignments (id),
+  FOREIGN KEY (course_assignment_id) REFERENCES course_assignments (id) ON DELETE SET NULL,
   UNIQUE (date, start_time, end_time, classroom_id, course_assignment_id)
 );

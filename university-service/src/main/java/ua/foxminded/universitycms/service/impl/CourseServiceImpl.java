@@ -1,7 +1,7 @@
 package ua.foxminded.universitycms.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,12 +11,10 @@ import org.springframework.transaction.annotation.Transactional;
 import ua.foxminded.universitycms.dto.CourseDTO;
 import ua.foxminded.universitycms.mapping.CourseMapper;
 import ua.foxminded.universitycms.model.entity.Course;
-import ua.foxminded.universitycms.model.entity.CourseAssignment;
 import ua.foxminded.universitycms.model.entity.CourseStatus;
 import ua.foxminded.universitycms.model.entity.user.universityuserdata.TeacherData;
 import ua.foxminded.universitycms.repository.CourseAssignmentRepository;
 import ua.foxminded.universitycms.repository.CourseRepository;
-import ua.foxminded.universitycms.repository.user.universityuserdata.TeacherDataRepository;
 import ua.foxminded.universitycms.service.CourseService;
 import ua.foxminded.universitycms.service.exception.CourseAlreadyExistsException;
 import ua.foxminded.universitycms.service.exception.CourseNotFoundException;
@@ -30,7 +28,6 @@ public class CourseServiceImpl implements CourseService {
   private final CourseRepository courseRepository;
   private final CourseMapper courseMapper;
   private final CourseAssignmentRepository courseAssignmentRepository;
-  private final TeacherDataRepository teacherDataRepository;
 
   @Override
   @Transactional
@@ -50,12 +47,16 @@ public class CourseServiceImpl implements CourseService {
   }
 
   @Override
-  public Optional<CourseDTO> getCourseById(String id) {
+  @Transactional(readOnly = true)
+  public CourseDTO getCourseById(String id) {
     log.info("Fetching course with id {}.", id);
-    return courseRepository.findById(id).map(courseMapper::courseToCourseDTO);
+    return courseRepository.findById(id)
+        .map(courseMapper::courseToCourseDTO)
+        .orElseThrow(() -> new CourseNotFoundException("Course not found with id: " + id));
   }
 
   @Override
+  @Transactional(readOnly = true)
   public List<CourseDTO> getAllCourses() {
     log.info("Fetching all courses.");
     return courseRepository.findAll().stream()
@@ -64,6 +65,7 @@ public class CourseServiceImpl implements CourseService {
   }
 
   @Override
+  @Transactional(readOnly = true)
   public List<CourseDTO> getAllCourses(Integer page, Integer itemsPerPage) {
     log.info("Fetching page {} of courses with {} items per page.", page, itemsPerPage);
     Pageable pageable = Pageable.ofSize(itemsPerPage).withPage(page - 1);
@@ -73,6 +75,7 @@ public class CourseServiceImpl implements CourseService {
   }
 
   @Override
+  @Transactional(readOnly = true)
   public List<CourseDTO> getAllActiveCourses() {
     log.info("Fetching all active courses.");
     return courseRepository.findByStatus(CourseStatus.ACTIVE).stream()
@@ -92,7 +95,20 @@ public class CourseServiceImpl implements CourseService {
       throw new InactiveCourseException("Cannot update an inactive course.");
     }
 
-    course = courseMapper.courseDTOToCourse(courseDTO);
+    if (!course.getName().equalsIgnoreCase(courseDTO.getName()) &&
+        courseRepository.existsByNameIgnoreCase(courseDTO.getName())) {
+      throw new CourseAlreadyExistsException(
+          "Course with name '" + courseDTO.getName() + "' already exists");
+    }
+
+    if (!course.getDescription().equalsIgnoreCase(courseDTO.getDescription()) &&
+        courseRepository.existsByDescriptionIgnoreCase(courseDTO.getDescription())) {
+      throw new CourseAlreadyExistsException(
+          "Course with description '" + courseDTO.getDescription() + "' already exists");
+    }
+
+    course.setName(courseDTO.getName());
+    course.setDescription(courseDTO.getDescription());
     courseRepository.save(course);
   }
 
@@ -121,17 +137,13 @@ public class CourseServiceImpl implements CourseService {
     Course course = courseRepository.findById(id)
         .orElseThrow(() -> new CourseNotFoundException("Course not found"));
 
-    List<TeacherData> teachers = teacherDataRepository.findAll();
-    for (TeacherData teacher : teachers) {
+    for (TeacherData teacher : new ArrayList<>(course.getTeachers())) {
       teacher.getCourses().remove(course);
-      teacherDataRepository.save(teacher);
+      course.getTeachers().remove(teacher);
     }
 
-    List<CourseAssignment> assignments = courseAssignmentRepository.findByCourseId(id);
-    for (CourseAssignment assignment : assignments) {
-      assignment.setCourse(null);
-      courseAssignmentRepository.save(assignment);
-    }
+    courseAssignmentRepository.deleteByCourseId(course.getId());
+    course.getCourseAssignments().clear();
 
     course.setStatus(CourseStatus.INACTIVE);
     courseRepository.save(course);

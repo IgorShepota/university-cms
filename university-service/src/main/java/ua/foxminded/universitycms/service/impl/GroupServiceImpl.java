@@ -9,7 +9,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ua.foxminded.universitycms.dto.CourseAssignmentDTO;
 import ua.foxminded.universitycms.dto.GroupDTO;
 import ua.foxminded.universitycms.dto.user.role.StudentResponseDTO;
 import ua.foxminded.universitycms.mapping.CourseAssignmentMapper;
@@ -37,7 +36,6 @@ public class GroupServiceImpl implements GroupService {
   private final GroupRepository groupRepository;
   private final GroupMapper groupMapper;
   private final CourseAssignmentRepository courseAssignmentRepository;
-  private final CourseAssignmentMapper courseAssignmentMapper;
   private final StudentDataRepository studentDataRepository;
   private final StudentMapper studentMapper;
 
@@ -137,43 +135,9 @@ public class GroupServiceImpl implements GroupService {
   public GroupDTO getGroupEditDetails(String groupId) {
     GroupDTO group = getGroupById(groupId).orElseThrow(
         () -> new GroupNotFoundException("Group not found with ID: " + groupId));
-    List<CourseAssignmentDTO> availableAssignments = getCourseAssignmentWithNoGroup();
     List<StudentResponseDTO> availableStudents = getStudentWithNoGroup();
-    group.setAvailableCourseAssignments(availableAssignments);
     group.setAvailableStudents(availableStudents);
     return group;
-  }
-
-  @Override
-  @Transactional(readOnly = true)
-  public List<CourseAssignmentDTO> getCourseAssignmentWithNoGroup() {
-    log.info("Fetching course assignments with no group");
-    return courseAssignmentRepository.findCourseAssignmentsWithNoGroup().stream()
-        .map(courseAssignmentMapper::courseAssignmentToCourseAssignmentDTO)
-        .collect(Collectors.toList());
-  }
-
-  @Transactional
-  @Override
-  public void addCourseAssignmentToGroup(String groupId, String assignmentId) {
-    Group group = groupRepository.findById(groupId)
-        .orElseThrow(() -> new GroupNotFoundException("Group not found with ID: " + groupId));
-    CourseAssignment assignment = courseAssignmentRepository.findById(assignmentId)
-        .orElseThrow(() -> new InvalidCourseAssignmentException(
-            "Invalid course assignment ID: " + assignmentId));
-
-    if (group.getCourseAssignments().contains(assignment)) {
-      log.info("Course assignment with id {} is already in group {}", assignmentId, groupId);
-      return;
-    }
-
-    assignment.setGroup(group);
-    courseAssignmentRepository.save(assignment);
-
-    group.getCourseAssignments().add(assignment);
-    groupRepository.save(group);
-
-    log.info("Course assignment with id {} added to group {}", assignmentId, groupId);
   }
 
   @Override

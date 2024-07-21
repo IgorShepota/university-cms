@@ -32,9 +32,9 @@ public class GroupDTO {
   @Min(value = 0, message = "{group.studentCount.min}")
   private int studentCount;
 
-  private List<@Valid StudentResponseDTO> students;
+  private List<StudentResponseDTO> students;
   private List<@Valid CourseAssignmentDTO> courseAssignments;
-  private List<@Valid CourseAssignmentDTO> availableCourseAssignments;
-  private List<@Valid StudentResponseDTO> availableStudents;
+  //  private List<@Valid CourseAssignmentDTO> availableCourseAssignments;
+  private List<StudentResponseDTO> availableStudents;
 
 }

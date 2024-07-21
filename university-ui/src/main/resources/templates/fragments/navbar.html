@@ -41,6 +41,11 @@
                  th:classappend="${#httpServletRequest.requestURI == '/groups' ? 'active' : ''}"
                  href="/groups">Groups</a>
             </li>
+            <li class="nav-item">
+              <a class="nav-link"
+                 th:classappend="${#httpServletRequest.requestURI == '/assignments' ? 'active' : ''}"
+                 href="/assignments">Assignments</a>
+            </li>
           </ul>
           <ul class="navbar-nav">
             <li th:if="${#httpServletRequest.userPrincipal == null}" class="nav-item">

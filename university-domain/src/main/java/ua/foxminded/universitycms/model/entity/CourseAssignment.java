@@ -1,6 +1,7 @@
 package ua.foxminded.universitycms.model.entity;
 
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -16,8 +17,6 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 import ua.foxminded.universitycms.model.entity.user.universityuserdata.TeacherData;
 
 @Entity
@@ -41,14 +40,13 @@ public class CourseAssignment {
 
   @ManyToOne
   @JoinColumn(name = "course_id")
-  @OnDelete(action = OnDeleteAction.NO_ACTION)
   private Course course;
 
   @ManyToOne
   @JoinColumn(name = "teacher_data_id")
   private TeacherData teacherData;
 
-  @OneToMany(mappedBy = "courseAssignment", fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "courseAssignment", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Lesson> lessons;
 
 }

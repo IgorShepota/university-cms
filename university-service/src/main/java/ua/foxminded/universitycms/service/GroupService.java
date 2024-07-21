@@ -3,7 +3,6 @@ package ua.foxminded.universitycms.service;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.security.core.userdetails.UserDetails;
-import ua.foxminded.universitycms.dto.CourseAssignmentDTO;
 import ua.foxminded.universitycms.dto.GroupDTO;
 import ua.foxminded.universitycms.dto.user.role.StudentResponseDTO;
 import ua.foxminded.universitycms.model.entity.GroupStatus;
@@ -27,10 +26,6 @@ public interface GroupService {
   void deleteGroup(String id);
 
   GroupDTO getGroupEditDetails(String groupId);
-
-  List<CourseAssignmentDTO> getCourseAssignmentWithNoGroup();
-
-  void addCourseAssignmentToGroup(String groupId, String assignmentId);
 
   void removeCourseAssignmentFromGroup(String assignmentId);
 

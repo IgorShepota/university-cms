@@ -53,8 +53,8 @@
       <!-- Group header -->
       <div class="d-flex justify-content-between align-items-center">
         <h3>
-          <span th:text="${group.name}">Group Name</span> - <span id="groupStatus"
-                                                                  th:text="${group.status}">Status</span>
+          <span th:text="${group.name}">Group Name</span> -
+          <span id="groupStatus" th:text="${group.status}">Status</span>
         </h3>
         <div class="action-buttons">
           <h5>Actions</h5>
@@ -78,21 +78,6 @@
 
       <!-- Course Assignments section -->
       <h4 class="mt-4">Course Assignments</h4>
-      <div
-          th:if="${group.status == T(ua.foxminded.universitycms.model.entity.GroupStatus).NEW or group.status == T(ua.foxminded.universitycms.model.entity.GroupStatus).ACTIVE}"
-          class="mb-3">
-        <label for="availableAssignments" class="form-label">Add Course Assignment</label>
-        <div class="d-flex">
-          <select class="form-select custom-width" id="availableAssignments" name="assignmentId">
-            <option th:each="assignment : ${availableAssignments}"
-                    th:value="${assignment.id}"
-                    th:text="${assignment.courseName + ' - ' + assignment.teacherFullName}">
-              Course Assignment Name
-            </option>
-          </select>
-          <button class="btn btn-success ms-2" id="addAssignmentButton">Add</button>
-        </div>
-      </div>
       <table class="table mt-2 course-assignments-table" id="course-assignments-table">
         <thead>
         <tr>
@@ -172,28 +157,6 @@
       $(document).ready(function () {
         var csrfToken = $('#_csrf').val();
 
-        // Update available course assignments
-        function updateAvailableCourseAssignments() {
-          var groupId = $('#groupId').val();
-          $.ajax({
-            url: '/groups/edit/available-courseAssignments',
-            type: 'GET',
-            success: function (assignments) {
-              var $select = $('#availableAssignments');
-              $select.empty();
-              $.each(assignments, function (index, assignment) {
-                $select.append($('<option>', {
-                  value: assignment.id,
-                  text: assignment.courseName + ' - ' + assignment.teacherFullName
-                }));
-              });
-            },
-            error: function (xhr, status, error) {
-              console.error('Failed to update available course assignments:', error);
-            }
-          });
-        }
-
         // Update available students
         function updateAvailableStudents() {
           var groupId = $('#groupId').val();
@@ -216,27 +179,6 @@
           });
         }
 
-        // Add course assignment button click
-        $('#addAssignmentButton').click(function () {
-          var assignmentId = $('#availableAssignments').val();
-          var groupId = $('#groupId').val();
-
-          $.ajax({
-            url: '/groups/edit/' + groupId + '/addCourseAssignment',
-            type: 'POST',
-            data: {assignmentId: assignmentId},
-            beforeSend: function (xhr) {
-              xhr.setRequestHeader('X-CSRF-TOKEN', csrfToken);
-            },
-            success: function (response) {
-              location.reload();
-            },
-            error: function (xhr, status, error) {
-              alert('Failed to add course assignment: ' + xhr.responseText);
-            }
-          });
-        });
-
         // Remove course assignment button click
         $('.removeCourseAssignmentButton').click(function () {
           var assignmentId = $(this).data('assignment-id');
@@ -252,7 +194,6 @@
             success: function (response) {
               $('#courseAssignment-' + assignmentId).remove();
               checkForDeleteButton();
-              updateAvailableCourseAssignments();
               updateAvailableStudents();
             },
             error: function (xhr, status, error) {
@@ -297,7 +238,6 @@
             success: function (response) {
               $('#student-' + studentId).remove();
               checkForDeleteButton();
-              updateAvailableCourseAssignments();
               updateAvailableStudents();
             },
             error: function (xhr, status, error) {
@@ -371,7 +311,6 @@
 
         // Initial check for the delete button and update available students
         checkForDeleteButton();
-        updateAvailableCourseAssignments();
         updateAvailableStudents();
       });
     </script>

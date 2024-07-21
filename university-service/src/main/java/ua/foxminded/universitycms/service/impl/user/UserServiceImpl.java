@@ -1,21 +1,27 @@
 package ua.foxminded.universitycms.service.impl.user;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import javax.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ua.foxminded.universitycms.dto.user.UserResponseDTO;
+import ua.foxminded.universitycms.dto.user.StudentSearchCriteria;
 import ua.foxminded.universitycms.dto.user.UserRegistrationDTO;
+import ua.foxminded.universitycms.dto.user.UserResponseDTO;
 import ua.foxminded.universitycms.dto.user.role.StudentResponseDTO;
+import ua.foxminded.universitycms.dto.user.role.TeacherResponseDTO;
 import ua.foxminded.universitycms.mapping.user.UserMapper;
 import ua.foxminded.universitycms.mapping.user.role.StudentMapper;
+import ua.foxminded.universitycms.mapping.user.role.TeacherMapper;
 import ua.foxminded.universitycms.model.entity.user.User;
 import ua.foxminded.universitycms.model.entity.user.role.Role;
 import ua.foxminded.universitycms.model.entity.user.role.RoleName;
@@ -26,6 +32,7 @@ import ua.foxminded.universitycms.model.entity.user.universityuserdata.Universit
 import ua.foxminded.universitycms.repository.user.UserRepository;
 import ua.foxminded.universitycms.repository.user.role.RoleRepository;
 import ua.foxminded.universitycms.repository.user.universityuserdata.StudentDataRepository;
+import ua.foxminded.universitycms.repository.user.universityuserdata.TeacherDataRepository;
 import ua.foxminded.universitycms.repository.user.universityuserdata.UniversityUserDataRepository;
 import ua.foxminded.universitycms.service.exception.InvalidRoleNameException;
 import ua.foxminded.universitycms.service.exception.RoleNotFoundException;
@@ -40,9 +47,11 @@ public class UserServiceImpl implements UserService {
 
   private final UserMapper userMapper;
   private final StudentMapper studentMapper;
+  private final TeacherMapper teacherMapper;
   private final UserRepository userRepository;
   private final UniversityUserDataRepository universityUserDataRepository;
   private final StudentDataRepository studentDataRepository;
+  private final TeacherDataRepository teacherDataRepository;
   private final RoleRepository roleRepository;
   private final PasswordEncoder passwordEncoder;
 
@@ -83,23 +92,58 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public List<StudentResponseDTO> getAllStudentsSorted(String sort, String order) {
-    log.info("Fetching all students sorted by {} {}", sort, order);
+  @Transactional(readOnly = true)
+  public List<StudentResponseDTO> searchStudents(StudentSearchCriteria criteria, String sort,
+      String order) {
+    log.info("Searching students with criteria: {}, sorted by {} {}", criteria, sort, order);
 
+    Specification<StudentData> spec = createSpecification(criteria);
     boolean isAscending = "asc".equalsIgnoreCase(order);
 
-    List<StudentData> studentDataList = studentDataRepository.findAllWithSort(sort, isAscending);
+    List<StudentData> studentDataList = studentDataRepository.findAllWithSpecificationAndSort(spec,
+        sort, isAscending);
 
     return studentDataList.stream()
         .map(studentMapper::mapToStudentResponseDTO)
         .collect(Collectors.toList());
   }
 
+  private Specification<StudentData> createSpecification(StudentSearchCriteria criteria) {
+    return (root, query, cb) -> {
+      List<Predicate> predicates = new ArrayList<>();
+
+      if (criteria.getId() != null && !criteria.getId().isEmpty()) {
+        predicates.add(cb.like(root.get("id"), "%" + criteria.getId() + "%"));
+      }
+      if (criteria.getFirstName() != null && !criteria.getFirstName().isEmpty()) {
+        predicates.add(cb.like(cb.lower(root.get("user").get("firstName")),
+            "%" + criteria.getFirstName().toLowerCase() + "%"));
+      }
+      if (criteria.getLastName() != null && !criteria.getLastName().isEmpty()) {
+        predicates.add(cb.like(cb.lower(root.get("user").get("lastName")),
+            "%" + criteria.getLastName().toLowerCase() + "%"));
+      }
+      if (criteria.getEmail() != null && !criteria.getEmail().isEmpty()) {
+        predicates.add(cb.like(cb.lower(root.get("user").get("email")),
+            "%" + criteria.getEmail().toLowerCase() + "%"));
+      }
+      if (criteria.getGender() != null) {
+        predicates.add(cb.equal(root.get("user").get("gender"), criteria.getGender()));
+      }
+      if (criteria.getGroupName() != null && !criteria.getGroupName().isEmpty()) {
+        predicates.add(cb.like(cb.lower(root.get("ownerGroup").get("name")),
+            "%" + criteria.getGroupName().toLowerCase() + "%"));
+      }
+
+      return cb.and(predicates.toArray(new Predicate[0]));
+    };
+  }
+
   @Override
-  public List<UserResponseDTO> getAllTeachers() {
+  public List<TeacherResponseDTO> getAllTeachers() {
     log.info("Fetching all teachers.");
-    return userRepository.findAllByRoleName(RoleName.TEACHER).stream()
-        .map(userMapper::userToUserResponseDTO)
+    return teacherDataRepository.findAll().stream()
+        .map(teacherMapper::mapToTeacherResponseDTO)
         .collect(Collectors.toList());
   }
 

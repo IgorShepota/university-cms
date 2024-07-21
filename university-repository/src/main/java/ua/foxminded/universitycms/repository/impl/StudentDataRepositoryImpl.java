@@ -9,6 +9,7 @@ import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Root;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Repository;
 import ua.foxminded.universitycms.model.entity.Group;
 import ua.foxminded.universitycms.model.entity.user.User;
@@ -22,7 +23,8 @@ public class StudentDataRepositoryImpl implements StudentDataRepositoryCustom {
   private EntityManager entityManager;
 
   @Override
-  public List<StudentData> findAllWithSort(String sortField, boolean isAscending) {
+  public List<StudentData> findAllWithSpecificationAndSort(Specification<StudentData> spec,
+      String sortField, boolean isAscending) {
     CriteriaBuilder cb = entityManager.getCriteriaBuilder();
     CriteriaQuery<StudentData> query = cb.createQuery(StudentData.class);
     Root<StudentData> root = query.from(StudentData.class);
@@ -30,6 +32,10 @@ public class StudentDataRepositoryImpl implements StudentDataRepositoryCustom {
     Join<StudentData, Group> groupJoin = root.join("ownerGroup", JoinType.LEFT);
 
     query.select(root);
+
+    if (spec != null) {
+      query.where(spec.toPredicate(root, query, cb));
+    }
 
     Expression<?> sortExpression;
     switch (sortField) {
